@@ -1,4 +1,4 @@
-import { streamText } from "ai";
+import { streamText, convertToModelMessages } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { systemPrompt } from "@/lib/resume-data";
 
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openrouter(model),
     system: systemPrompt,
-    messages,
+    messages: convertToModelMessages(messages),
   });
 
   if (format === "text") {
