@@ -9,7 +9,7 @@ servers:
 
 proxy:
   ssl: false
-  host: israeldeveloper.com.br
+  host: portfolio.israeldeveloper.com.br
   app_port: 3000
   healthcheck:
     path: /
