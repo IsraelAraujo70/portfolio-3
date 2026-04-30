@@ -32,4 +32,4 @@ env:
     - OPENROUTER_MODEL
 
 ssh:
-  user: <%= ENV["KAMAL_SSH_USER"] || "israel" %>
+  user: <%= ENV["KAMAL_SSH_USER"] || "baremetal" %>
