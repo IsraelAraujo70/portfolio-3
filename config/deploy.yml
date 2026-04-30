@@ -1,6 +1,6 @@
 service: portfolio
 
-image: ghcr.io/israelaraujo70/portfolio-3
+image: israelaraujo70/portfolio-3
 
 servers:
   web:
