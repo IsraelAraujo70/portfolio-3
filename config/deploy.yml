@@ -1,0 +1,35 @@
+service: portfolio
+
+image: ghcr.io/israelaraujo70/portfolio-3
+
+servers:
+  web:
+    hosts:
+      - <%= ENV["KAMAL_HOST"] || "YOUR_SERVER_IP" %>
+
+proxy:
+  ssl: false
+  host: israeldeveloper.com.br
+  app_port: 3000
+  healthcheck:
+    path: /
+
+registry:
+  server: ghcr.io
+  username: IsraelAraujo70
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+env:
+  clear:
+    NODE_ENV: production
+    NEXT_TELEMETRY_DISABLED: 1
+  secret:
+    - OPENROUTER_API_KEY
+    - OPENROUTER_MODEL
+
+ssh:
+  user: <%= ENV["KAMAL_SSH_USER"] || "israel" %>
