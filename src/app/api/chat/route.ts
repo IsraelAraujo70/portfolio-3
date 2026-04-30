@@ -13,10 +13,13 @@ export async function POST(req: Request) {
   const model = process.env.OPENROUTER_MODEL || "anthropic/claude-sonnet-4-20250514";
   const format = req.headers.get("x-format");
 
+  const modelMessages =
+    format === "text" ? messages : await convertToModelMessages(messages);
+
   const result = streamText({
     model: openrouter(model),
     system: systemPrompt,
-    messages: await convertToModelMessages(messages),
+    messages: modelMessages,
   });
 
   if (format === "text") {
