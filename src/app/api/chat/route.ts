@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openrouter(model),
     system: systemPrompt,
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
 
   if (format === "text") {
