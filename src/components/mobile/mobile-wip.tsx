@@ -32,8 +32,8 @@ export function MobileWIP() {
           Work in Progress
         </h1>
         <p className="text-gray-400 text-sm mb-6 leading-relaxed">
-          A versão mobile está sendo construída como uma experiência iOS-like.
-          Por enquanto, recomendo acessar pelo computador.
+          The mobile version is being built as an iOS-like experience.
+          For now, I recommend accessing from a computer.
         </p>
 
         <div className="flex items-center justify-center gap-3 text-gray-500 text-xs">
@@ -44,7 +44,7 @@ export function MobileWIP() {
           <span className="text-white/10">|</span>
           <div className="flex items-center gap-1.5">
             <Smartphone size={14} className="text-gray-600" />
-            <span>Mobile em breve</span>
+            <span>Mobile coming soon</span>
           </div>
         </div>
 
