@@ -14,11 +14,11 @@ export function FinderHero({ onOpenChat }: { onOpenChat: () => void }) {
           transition={{ delay: 0.1 }}
           className="shrink-0"
         >
-          <div className="w-28 h-28 md:w-36 md:h-36 rounded-full liquid-glass-light flex items-center justify-center">
+          <div className="w-28 h-28 md:w-36 md:h-36 rounded-full liquid-glass-light p-1 flex items-center justify-center">
             <img
-              src="/dev-icon.svg"
-              alt="Dev icon"
-              className="w-20 h-20 md:w-24 md:h-24"
+              src="/profile-picture.jpeg"
+              alt={personalInfo.fullName}
+              className="w-full h-full rounded-full object-cover"
             />
           </div>
         </motion.div>

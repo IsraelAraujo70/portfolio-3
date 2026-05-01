@@ -7,6 +7,7 @@ export const personalInfo = {
   email: "israelaraujodeoliveira@gmail.com",
   linkedin: "https://linkedin.com/in/araisr",
   github: "https://github.com/IsraelAraujo70",
+  x: "https://x.com/calop1337",
 };
 
 export const stats = [

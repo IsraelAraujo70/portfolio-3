@@ -9,7 +9,7 @@ import {
   StickyNote,
   Mail,
 } from "lucide-react";
-import { GitHubIcon } from "@/components/ui/icons";
+import { GitHubIcon, XIcon } from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
 
 interface DockItemConfig {
@@ -84,6 +84,13 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
       icon: <img src="/linkedin-icon.svg" alt="LinkedIn" className="w-7 h-7 brightness-0 invert drop-shadow-sm" />,
       gradient: "from-[#0077B5] to-[#005fa3]",
       href: personalInfo.linkedin,
+    },
+    {
+      id: "x",
+      label: "X",
+      icon: <XIcon width={24} height={24} className="text-white drop-shadow-sm" />,
+      gradient: "from-zinc-800 to-black",
+      href: personalInfo.x,
     },
   ];
 

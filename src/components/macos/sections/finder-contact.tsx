@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Mail } from "lucide-react";
-import { GitHubIcon, LinkedInIcon } from "@/components/ui/icons";
+import { GitHubIcon, LinkedInIcon, XIcon } from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
 
 const contactLinks = [
@@ -18,6 +18,13 @@ const contactLinks = [
     label: "LinkedIn",
     value: "araisr",
     href: personalInfo.linkedin,
+    isSvg: true,
+  },
+  {
+    icon: XIcon,
+    label: "X",
+    value: "calop1337",
+    href: personalInfo.x,
     isSvg: true,
   },
   {
