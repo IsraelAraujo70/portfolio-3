@@ -20,6 +20,7 @@ interface ChatWindowProps {
   isOpen: boolean;
   onClose: () => void;
   onMinimize?: () => void;
+  onMaximize?: () => void;
   onFocus?: () => void;
   dragHandleProps?: Record<string, unknown>;
   style?: CSSProperties;
@@ -29,6 +30,7 @@ export function ChatWindow({
   isOpen,
   onClose,
   onMinimize,
+  onMaximize,
   onFocus,
   dragHandleProps,
   style,
@@ -65,10 +67,11 @@ export function ChatWindow({
       isOpen={isOpen}
       onClose={onClose}
       onMinimize={onMinimize}
+      onMaximize={onMaximize}
       onFocus={onFocus}
       dragHandleProps={dragHandleProps}
       style={style}
-      className="fixed w-[400px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-8rem)] flex flex-col shadow-2xl"
+      className="fixed flex flex-col shadow-2xl"
     >
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
         {messages.length === 0 && (

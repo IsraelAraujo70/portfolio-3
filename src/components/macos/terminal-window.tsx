@@ -89,6 +89,7 @@ interface TerminalWindowProps {
   isOpen: boolean;
   onClose: () => void;
   onMinimize?: () => void;
+  onMaximize?: () => void;
   onFocus?: () => void;
   dragHandleProps?: Record<string, unknown>;
   style?: CSSProperties;
@@ -98,6 +99,7 @@ export function TerminalWindow({
   isOpen,
   onClose,
   onMinimize,
+  onMaximize,
   onFocus,
   dragHandleProps,
   style,
@@ -198,11 +200,12 @@ export function TerminalWindow({
       isOpen={isOpen}
       onClose={onClose}
       onMinimize={onMinimize}
+      onMaximize={onMaximize}
       onFocus={onFocus}
       dragHandleProps={dragHandleProps}
       style={style}
       dark
-      className="fixed w-[680px] max-w-[calc(100vw-2rem)] h-[420px] max-h-[calc(100vh-8rem)] flex flex-col shadow-2xl"
+      className="fixed flex flex-col shadow-2xl"
     >
       <div
         ref={scrollRef}

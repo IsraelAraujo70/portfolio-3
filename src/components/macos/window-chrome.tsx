@@ -10,6 +10,7 @@ interface WindowChromeProps {
   isOpen?: boolean;
   onClose?: () => void;
   onMinimize?: () => void;
+  onMaximize?: () => void;
   onFocus?: () => void;
   dragHandleProps?: Record<string, unknown>;
   sidebar?: ReactNode;
@@ -25,6 +26,7 @@ export function WindowChrome({
   isOpen = true,
   onClose,
   onMinimize,
+  onMaximize,
   onFocus,
   dragHandleProps,
   sidebar,
@@ -90,7 +92,10 @@ export function WindowChrome({
                   </svg>
                 )}
               </button>
-              <button className="w-3 h-3 rounded-full bg-[#28c840] flex items-center justify-center">
+              <button
+                onClick={onMaximize}
+                className="w-3 h-3 rounded-full bg-[#28c840] flex items-center justify-center"
+              >
                 {hoverTrafficLights && (
                   <svg viewBox="0 0 12 12" className="w-2 h-2">
                     <path d="M3 3l3 3-3 3M9 3l-3 3 3 3" stroke="#006500" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />

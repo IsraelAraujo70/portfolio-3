@@ -15,6 +15,7 @@ interface FinderWindowProps {
   onOpenTerminal?: () => void;
   onClose?: () => void;
   onMinimize?: () => void;
+  onMaximize?: () => void;
   onFocus?: () => void;
   dragHandleProps?: Record<string, unknown>;
   style?: CSSProperties;
@@ -26,6 +27,7 @@ export function FinderWindow({
   onOpenChat,
   onClose,
   onMinimize,
+  onMaximize,
   onFocus,
   dragHandleProps,
   style,
@@ -76,6 +78,7 @@ export function FinderWindow({
       }
       onClose={onClose}
       onMinimize={onMinimize}
+      onMaximize={onMaximize}
       onFocus={onFocus}
       dragHandleProps={dragHandleProps}
       style={style}
