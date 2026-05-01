@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     format === "text" ? messages : await convertToModelMessages(messages);
 
   const result = streamText({
-    model: openrouter(model),
+    model: openrouter.chat(model),
     system: systemPrompt,
     messages: modelMessages,
   });

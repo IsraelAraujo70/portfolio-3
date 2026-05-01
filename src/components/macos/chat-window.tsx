@@ -1,20 +1,13 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { useState, useRef, useEffect, type CSSProperties } from "react";
+import { useEffect, type CSSProperties } from "react";
 import { Send, Loader2 } from "lucide-react";
 import { WindowChrome } from "./window-chrome";
-
-const suggestions = [
-  "What's your experience with Rust?",
-  "Tell me about your AI projects",
-  "What open source work have you done?",
-  "Are you available for remote work?",
-];
-
-function getMessageText(parts: Array<{ type: string; text?: string }>): string {
-  return parts.filter((p) => p.type === "text").map((p) => p.text ?? "").join("");
-}
+import {
+  useAIChat,
+  getMessageText,
+  chatSuggestions,
+} from "@/hooks/use-ai-chat";
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -35,31 +28,21 @@ export function ChatWindow({
   dragHandleProps,
   style,
 }: ChatWindowProps) {
-  const { messages, sendMessage, status, error } = useChat();
-  const [input, setInput] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const isLoading = status === "submitted" || status === "streaming";
-
-  useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [messages]);
+  const {
+    messages,
+    input,
+    setInput,
+    isLoading,
+    error,
+    scrollRef,
+    inputRef,
+    handleSubmit,
+    handleSuggestion,
+  } = useAIChat();
 
   useEffect(() => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 300);
-  }, [isOpen]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-    sendMessage({ text: input });
-    setInput("");
-  };
-
-  const handleSuggestion = (text: string) => {
-    if (isLoading) return;
-    sendMessage({ text });
-  };
+  }, [isOpen, inputRef]);
 
   return (
     <WindowChrome
@@ -81,7 +64,7 @@ export function ChatWindow({
               skills, experience, or projects.
             </p>
             <div className="space-y-2">
-              {suggestions.map((s) => (
+              {chatSuggestions.map((s) => (
                 <button
                   key={s}
                   onClick={() => handleSuggestion(s)}
