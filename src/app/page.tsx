@@ -1,12 +1,22 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useIsMobile } from "@/hooks/use-is-mobile";
-import { Desktop } from "@/components/macos/desktop";
-import { MobileWIP } from "@/components/mobile/mobile-wip";
+
+const Desktop = dynamic(
+  () => import("@/components/macos/desktop").then((m) => ({ default: m.Desktop })),
+  { ssr: false }
+);
+
+const IOS = dynamic(
+  () => import("@/components/mobile/ios").then((m) => ({ default: m.IOS })),
+  { ssr: false }
+);
 
 export default function Home() {
   const isMobile = useIsMobile();
 
-  if (isMobile) return <MobileWIP />;
+  if (isMobile === null) return null;
+  if (isMobile) return <IOS />;
   return <Desktop />;
 }

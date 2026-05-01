@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import "@xterm/xterm/css/xterm.css";
 import "./globals.css";
@@ -41,6 +41,14 @@ export const metadata: Metadata = {
     type: "website",
   },
   robots: "index, follow",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  viewportFit: "cover",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
