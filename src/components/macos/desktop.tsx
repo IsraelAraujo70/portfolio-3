@@ -289,13 +289,15 @@ function WindowWrapper({
 
   const resizeProps = useResize({ onResize, onStart: onResizeStart });
 
-  const posStyle: React.CSSProperties = {
+  if (!win.isOpen) return null;
+
+  const wrapperStyle: React.CSSProperties = {
     left: win.position.x,
     top: win.position.y,
+    width: win.size.w,
+    height: win.size.h,
     zIndex: win.zIndex,
   };
-
-  if (!win.isOpen) return null;
 
   const rect = { x: win.position.x, y: win.position.y, w: win.size.w, h: win.size.h };
 
@@ -309,7 +311,7 @@ function WindowWrapper({
           exit={{ opacity: 0, scale: 0.5, y: 300 }}
           transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
           className="fixed"
-          style={posStyle}
+          style={wrapperStyle}
         >
           {children({
             onClose: () => dispatch({ type: "CLOSE", id }),
@@ -317,7 +319,7 @@ function WindowWrapper({
             onMaximize: () => dispatch({ type: "MAXIMIZE", id }),
             onFocus: () => dispatch({ type: "FOCUS", id }),
             dragHandleProps,
-            style: { width: win.size.w, height: win.size.h },
+            style: { width: "100%", height: "100%" },
           })}
           {!win.isMaximized && (
             <ResizeHandles

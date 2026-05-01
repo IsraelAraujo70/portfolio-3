@@ -71,7 +71,7 @@ export function ChatWindow({
       onFocus={onFocus}
       dragHandleProps={dragHandleProps}
       style={style}
-      className="fixed flex flex-col shadow-2xl"
+      className="flex flex-col w-full h-full shadow-2xl"
     >
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
         {messages.length === 0 && (

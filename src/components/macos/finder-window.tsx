@@ -82,7 +82,7 @@ export function FinderWindow({
       onFocus={onFocus}
       dragHandleProps={dragHandleProps}
       style={style}
-      className="fixed flex flex-col"
+      className="flex flex-col w-full h-full"
       sidebar={
         <FinderSidebar
           activeSection={activeSection}

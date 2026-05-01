@@ -1,89 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, type CSSProperties } from "react";
+import { useRef, useEffect, useCallback, type CSSProperties } from "react";
 import { WindowChrome } from "./window-chrome";
-import {
-  personalInfo,
-  skillCategories,
-  experience,
-  projects,
-  openSourceContributions,
-} from "@/lib/resume-data";
-
-interface TerminalLine {
-  type: "input" | "output" | "error" | "system";
-  content: string;
-}
-
-const HELP_TEXT = `
-Available commands:
-  about       Learn about Israel
-  skills      Technical skills
-  experience  Work experience
-  projects    Personal projects
-  opensource  Open source contributions
-  contact     Get in touch
-  chat <msg>  Ask the AI anything
-  clear       Clear terminal
-  exit        Close terminal
-`.trim();
-
-const ABOUT_TEXT = `
-${personalInfo.fullName}
-${personalInfo.title} | ${personalInfo.location}
-
-Full Stack Engineer with 2+ years building production systems
-in Python, TypeScript, Go & Rust.
-
-Open source contributor to Zed Editor (23k+ stars).
-1,500+ commits in the last 7 months. 100 public repos.
-
-Currently open to international/remote opportunities.
-`.trim();
-
-function formatSkills(): string {
-  return skillCategories
-    .map((c) => `  ${c.name.padEnd(16)} ${c.items.join(" · ")}`)
-    .join("\n");
-}
-
-function formatExperience(): string {
-  return experience
-    .map(
-      (job) =>
-        `${job.company} — ${job.role} (${job.period})\n${job.highlights
-          .slice(0, 3)
-          .map((h) => `  ▸ ${h}`)
-          .join("\n")}`
-    )
-    .join("\n\n");
-}
-
-function formatProjects(): string {
-  return projects
-    .map(
-      (p, i) =>
-        `${i + 1}. ${p.name} — ${p.tagline}\n   ${p.tech.join(", ")}\n   ${p.github}`
-    )
-    .join("\n\n");
-}
-
-function formatOpenSource(): string {
-  return openSourceContributions
-    .map(
-      (c) =>
-        `${c.project}${c.stars ? ` (⭐ ${c.stars})` : ""} — ${c.language}\n${c.prs
-          .map((pr) => `  ▸ ${pr.title}`)
-          .join("\n")}`
-    )
-    .join("\n\n");
-}
-
-const CONTACT_TEXT = `
-  Email     ${personalInfo.email}
-  LinkedIn  ${personalInfo.linkedin}
-  GitHub    ${personalInfo.github}
-`.trim();
+import { getMotd, getPrompt, executeCommand } from "@/lib/terminal-sdk";
 
 interface TerminalWindowProps {
   isOpen: boolean;
@@ -104,95 +23,166 @@ export function TerminalWindow({
   dragHandleProps,
   style,
 }: TerminalWindowProps) {
-  const [lines, setLines] = useState<TerminalLine[]>([
-    { type: "system", content: "Welcome to Israel's terminal. Type 'help' for available commands." },
-  ]);
-  const [input, setInput] = useState("");
-  const [isStreaming, setIsStreaming] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const termRef = useRef<import("@xterm/xterm").Terminal | null>(null);
+  const fitAddonRef = useRef<import("@xterm/addon-fit").FitAddon | null>(null);
+  const lineBuffer = useRef("");
+  const streamingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
-  useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [lines]);
+  const initTerminal = useCallback(async () => {
+    if (!containerRef.current || termRef.current) return;
 
-  useEffect(() => {
-    if (isOpen) setTimeout(() => inputRef.current?.focus(), 300);
-  }, [isOpen]);
+    const [{ Terminal }, { FitAddon }, { WebLinksAddon }] = await Promise.all([
+      import("@xterm/xterm"),
+      import("@xterm/addon-fit"),
+      import("@xterm/addon-web-links"),
+    ]);
 
-  const addLine = useCallback((type: TerminalLine["type"], content: string) => {
-    setLines((prev) => [...prev, { type, content }]);
+    const fitAddon = new FitAddon();
+    const term = new Terminal({
+      cursorBlink: true,
+      cursorStyle: "bar",
+      fontSize: 13,
+      fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', Menlo, monospace",
+      lineHeight: 1.3,
+      theme: {
+        background: "transparent",
+        foreground: "#d4d4d4",
+        cursor: "#22d3ee",
+        cursorAccent: "#0a0a0f",
+        selectionBackground: "rgba(34, 211, 238, 0.25)",
+        black: "#1e1e2e",
+        red: "#f38ba8",
+        green: "#a6e3a1",
+        yellow: "#f9e2af",
+        blue: "#89b4fa",
+        magenta: "#cba6f7",
+        cyan: "#22d3ee",
+        white: "#d4d4d4",
+        brightBlack: "#585b70",
+        brightRed: "#f38ba8",
+        brightGreen: "#a6e3a1",
+        brightYellow: "#f9e2af",
+        brightBlue: "#89b4fa",
+        brightMagenta: "#cba6f7",
+        brightCyan: "#22d3ee",
+        brightWhite: "#ffffff",
+      },
+      allowTransparency: true,
+      scrollback: 1000,
+      convertEol: false,
+    });
+
+    term.loadAddon(fitAddon);
+    term.loadAddon(new WebLinksAddon());
+    term.open(containerRef.current);
+    fitAddon.fit();
+
+    termRef.current = term;
+    fitAddonRef.current = fitAddon;
+
+    term.write(getMotd());
+    term.write(getPrompt());
+
+    term.onData((data: string) => {
+      if (streamingRef.current) return;
+
+      if (data === "\r") {
+        term.write("\r\n");
+        const input = lineBuffer.current;
+        lineBuffer.current = "";
+        handleInput(term, input);
+      } else if (data === "\x7f" || data === "\b") {
+        if (lineBuffer.current.length > 0) {
+          lineBuffer.current = lineBuffer.current.slice(0, -1);
+          term.write("\b \b");
+        }
+      } else if (data === "\x03") {
+        lineBuffer.current = "";
+        term.write("^C\r\n");
+        term.write(getPrompt());
+      } else if (data === "\x0c") {
+        term.clear();
+        term.write(getPrompt());
+      } else if (data >= " ") {
+        lineBuffer.current += data;
+        term.write(data);
+      }
+    });
   }, []);
 
-  const handleChat = useCallback(async (query: string) => {
-    setIsStreaming(true);
-    addLine("system", "Connecting to AI...");
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Format": "text" },
-        body: JSON.stringify({ messages: [{ role: "user", content: query }] }),
-      });
-      if (!response.ok) throw new Error("API error");
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error("No stream");
-      const decoder = new TextDecoder();
-      let fullText = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        fullText += decoder.decode(value, { stream: true });
-        setLines((prev) => {
-          const updated = [...prev];
-          const last = updated[updated.length - 1];
-          if (last?.type === "system" && last?.content === "Connecting to AI...") {
-            updated[updated.length - 1] = { type: "output", content: fullText };
-          } else if (last?.type === "output") {
-            updated[updated.length - 1] = { type: "output", content: fullText };
-          } else {
-            updated.push({ type: "output", content: fullText });
-          }
-          return updated;
-        });
+  const handleInput = useCallback(async (term: import("@xterm/xterm").Terminal, input: string) => {
+    if (!input.trim()) {
+      term.write(getPrompt());
+      return;
+    }
+
+    const result = executeCommand(input);
+
+    if (result.action === "clear") {
+      term.clear();
+      term.write(getPrompt());
+      return;
+    }
+
+    if (result.action === "exit") {
+      onCloseRef.current();
+      return;
+    }
+
+    if (result.stream) {
+      streamingRef.current = true;
+      const reader = result.stream.getReader();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const text = new TextDecoder().decode(value);
+          term.write(text);
+        }
+      } finally {
+        streamingRef.current = false;
+        term.write(getPrompt());
       }
-    } catch {
-      addLine("error", "Failed to connect to AI. Check your connection.");
-    } finally {
-      setIsStreaming(false);
+      return;
     }
-  }, [addLine]);
 
-  const handleCommand = useCallback((cmd: string) => {
-    const trimmed = cmd.trim().toLowerCase();
-    const parts = trimmed.split(/\s+/);
-    const command = parts[0];
-    const args = parts.slice(1).join(" ");
-    addLine("input", `> ${cmd}`);
-    switch (command) {
-      case "help": addLine("output", HELP_TEXT); break;
-      case "about": addLine("output", ABOUT_TEXT); break;
-      case "skills": addLine("output", formatSkills()); break;
-      case "experience": addLine("output", formatExperience()); break;
-      case "projects": addLine("output", formatProjects()); break;
-      case "opensource": addLine("output", formatOpenSource()); break;
-      case "contact": addLine("output", CONTACT_TEXT); break;
-      case "clear": setLines([]); break;
-      case "exit": case "quit": onClose(); break;
-      case "chat":
-        if (!args) addLine("error", "Usage: chat <your question>");
-        else handleChat(args);
-        break;
-      default:
-        addLine("error", `Command not found: ${command}. Type 'help' for available commands.`);
+    if (result.output) {
+      term.write(result.output + "\r\n");
     }
-  }, [addLine, onClose, handleChat]);
+    term.write(getPrompt());
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isStreaming) return;
-    handleCommand(input);
-    setInput("");
-  };
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => initTerminal(), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, initTerminal]);
+
+  useEffect(() => {
+    if (!isOpen || !fitAddonRef.current) return;
+    const observer = new ResizeObserver(() => {
+      try {
+        fitAddonRef.current?.fit();
+      } catch {}
+    });
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && termRef.current) {
+      setTimeout(() => {
+        fitAddonRef.current?.fit();
+        termRef.current?.focus();
+      }, 300);
+    }
+  }, [isOpen]);
 
   return (
     <WindowChrome
@@ -205,38 +195,13 @@ export function TerminalWindow({
       dragHandleProps={dragHandleProps}
       style={style}
       dark
-      className="fixed flex flex-col shadow-2xl"
+      className="flex flex-col w-full h-full shadow-2xl"
     >
       <div
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto px-5 py-3 font-mono text-sm space-y-1"
-        onClick={() => inputRef.current?.focus()}
-      >
-        {lines.map((line, i) => (
-          <div key={i} className="whitespace-pre-wrap">
-            {line.type === "input" && <span className="text-cyan-400">{line.content}</span>}
-            {line.type === "output" && <span className="text-gray-300">{line.content}</span>}
-            {line.type === "error" && <span className="text-red-400/80">{line.content}</span>}
-            {line.type === "system" && <span className="text-gray-500">{line.content}</span>}
-          </div>
-        ))}
-      </div>
-
-      <form onSubmit={handleSubmit} className="px-5 py-3 border-t border-white/[0.08]">
-        <div className="flex items-center gap-2 font-mono text-sm">
-          <span className="text-cyan-400 shrink-0">{">"}</span>
-          <input
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={isStreaming}
-            className="flex-1 bg-transparent text-white focus:outline-none placeholder:text-gray-700"
-            placeholder={isStreaming ? "Waiting for response..." : "Type a command..."}
-            autoComplete="off"
-            spellCheck={false}
-          />
-        </div>
-      </form>
+        ref={containerRef}
+        className="flex-1 min-h-0 px-1 py-1"
+        onClick={() => termRef.current?.focus()}
+      />
     </WindowChrome>
   );
 }
