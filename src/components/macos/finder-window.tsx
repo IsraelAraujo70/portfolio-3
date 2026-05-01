@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, type CSSProperties } from "react";
 import { WindowChrome } from "./window-chrome";
 import { FinderSidebar } from "./finder-sidebar";
 import { FinderHero } from "./sections/finder-hero";
@@ -13,11 +13,23 @@ import { FinderContact } from "./sections/finder-contact";
 interface FinderWindowProps {
   onOpenChat: () => void;
   onOpenTerminal?: () => void;
+  onClose?: () => void;
+  onMinimize?: () => void;
+  onFocus?: () => void;
+  dragHandleProps?: Record<string, unknown>;
+  style?: CSSProperties;
 }
 
 const sectionIds = ["hero", "about", "experience", "projects", "opensource", "contact"];
 
-export function FinderWindow({ onOpenChat }: FinderWindowProps) {
+export function FinderWindow({
+  onOpenChat,
+  onClose,
+  onMinimize,
+  onFocus,
+  dragHandleProps,
+  style,
+}: FinderWindowProps) {
   const [activeSection, setActiveSection] = useState("hero");
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +74,12 @@ export function FinderWindow({ onOpenChat }: FinderWindowProps) {
       icon={
         <img src="/dev-icon.svg" alt="" className="w-4 h-4" />
       }
-      className="absolute inset-4 md:inset-8 lg:inset-x-[10%] lg:inset-y-6 xl:inset-x-[12%] flex flex-col"
+      onClose={onClose}
+      onMinimize={onMinimize}
+      onFocus={onFocus}
+      dragHandleProps={dragHandleProps}
+      style={style}
+      className="fixed flex flex-col"
       sidebar={
         <FinderSidebar
           activeSection={activeSection}

@@ -1,16 +1,12 @@
 "use client";
 
 import { useRef, useState, type MouseEvent, type ReactNode } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FolderOpen,
   Terminal,
   MessageCircle,
-  Globe,
   Mail,
-  Settings,
-  Music,
-  Camera,
 } from "lucide-react";
 import { GitHubIcon } from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
@@ -28,73 +24,57 @@ interface DockItemConfig {
 interface DockProps {
   onToggleTerminal: () => void;
   onToggleChat: () => void;
+  onClickFinder: () => void;
+  openWindows: string[];
 }
 
-export function Dock({ onToggleTerminal, onToggleChat }: DockProps) {
+export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, openWindows }: DockProps) {
   const dockRef = useRef<HTMLDivElement>(null);
   const [mouseX, setMouseX] = useState<number | null>(null);
 
   const items: DockItemConfig[] = [
     {
       id: "finder",
-      label: "Finder",
-      icon: <FolderOpen size={24} className="text-white" />,
+      label: "Portfolio",
+      icon: <FolderOpen size={26} className="text-white drop-shadow-sm" />,
       gradient: "from-blue-400 to-blue-600",
+      onClick: onClickFinder,
     },
     {
       id: "terminal",
       label: "Terminal",
-      icon: <Terminal size={24} className="text-white" />,
-      gradient: "from-gray-700 to-gray-900",
+      icon: <Terminal size={26} className="text-white drop-shadow-sm" />,
+      gradient: "from-zinc-600 to-zinc-800",
       onClick: onToggleTerminal,
     },
     {
       id: "messages",
-      label: "Messages",
-      icon: <MessageCircle size={24} className="text-white" />,
-      gradient: "from-green-400 to-green-600",
+      label: "AI Chat",
+      icon: <MessageCircle size={26} className="text-white drop-shadow-sm" />,
+      gradient: "from-green-400 to-emerald-600",
       onClick: onToggleChat,
       separator: true,
     },
     {
       id: "github",
       label: "GitHub",
-      icon: <GitHubIcon width={24} height={24} className="text-white" />,
-      gradient: "from-gray-600 to-gray-800",
+      icon: <GitHubIcon width={26} height={26} className="text-white drop-shadow-sm" />,
+      gradient: "from-neutral-600 to-neutral-800",
       href: personalInfo.github,
     },
     {
       id: "mail",
       label: "Mail",
-      icon: <Mail size={24} className="text-white" />,
-      gradient: "from-blue-500 to-blue-700",
+      icon: <Mail size={26} className="text-white drop-shadow-sm" />,
+      gradient: "from-sky-400 to-blue-600",
       href: `mailto:${personalInfo.email}`,
     },
     {
-      id: "safari",
+      id: "linkedin",
       label: "LinkedIn",
-      icon: <Globe size={24} className="text-white" />,
-      gradient: "from-sky-400 to-blue-500",
+      icon: <img src="/linkedin-icon.svg" alt="LinkedIn" className="w-7 h-7 brightness-0 invert drop-shadow-sm" />,
+      gradient: "from-[#0077B5] to-[#005fa3]",
       href: personalInfo.linkedin,
-      separator: true,
-    },
-    {
-      id: "music",
-      label: "Music",
-      icon: <Music size={22} className="text-white" />,
-      gradient: "from-red-400 to-pink-600",
-    },
-    {
-      id: "photos",
-      label: "Photos",
-      icon: <Camera size={22} className="text-white" />,
-      gradient: "from-orange-300 via-pink-400 to-purple-500",
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: <Settings size={24} className="text-white" />,
-      gradient: "from-gray-400 to-gray-600",
     },
   ];
 
@@ -106,8 +86,14 @@ export function Dock({ onToggleTerminal, onToggleChat }: DockProps) {
 
   const handleMouseLeave = () => setMouseX(null);
 
+  const windowIdMap: Record<string, string> = {
+    finder: "finder",
+    terminal: "terminal",
+    messages: "chat",
+  };
+
   return (
-    <div className="fixed bottom-2 left-1/2 -translate-x-1/2 z-40">
+    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[60]">
       <motion.div
         ref={dockRef}
         onMouseMove={handleMouseMove}
@@ -115,7 +101,15 @@ export function Dock({ onToggleTerminal, onToggleChat }: DockProps) {
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
-        className="flex items-end gap-1 px-3 py-1.5 rounded-2xl liquid-glass-heavy"
+        style={{
+          backdropFilter: "blur(50px) saturate(150%)",
+          WebkitBackdropFilter: "blur(50px) saturate(150%)",
+          background: "rgba(255, 255, 255, 0.08)",
+          border: "1px solid rgba(255, 255, 255, 0.18)",
+          boxShadow:
+            "0 8px 40px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.2), inset 0 -0.5px 0 rgba(255, 255, 255, 0.05)",
+        }}
+        className="flex items-end gap-1.5 px-2.5 pt-2 pb-1.5 rounded-2xl"
       >
         {items.map((item, index) => (
           <DockItem
@@ -124,6 +118,7 @@ export function Dock({ onToggleTerminal, onToggleChat }: DockProps) {
             index={index}
             mouseX={mouseX}
             dockRef={dockRef}
+            isOpen={openWindows.includes(windowIdMap[item.id] ?? "")}
           />
         ))}
       </motion.div>
@@ -136,11 +131,13 @@ function DockItem({
   index,
   mouseX,
   dockRef,
+  isOpen,
 }: {
   item: DockItemConfig;
   index: number;
   mouseX: number | null;
   dockRef: React.RefObject<HTMLDivElement | null>;
+  isOpen: boolean;
 }) {
   const itemRef = useRef<HTMLDivElement>(null);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -151,8 +148,8 @@ function DockItem({
     const dockRect = dockRef.current.getBoundingClientRect();
     const itemCenter = rect.left + rect.width / 2 - dockRect.left;
     const distance = Math.abs(mouseX - itemCenter);
-    const maxDistance = 100;
-    scale = 1 + 0.5 * Math.max(0, 1 - distance / maxDistance);
+    const maxDistance = 120;
+    scale = 1 + 0.6 * Math.max(0, 1 - distance / maxDistance);
   }
 
   const Wrapper = item.href ? "a" : "button";
@@ -163,7 +160,7 @@ function DockItem({
   return (
     <>
       {item.separator && index > 0 && (
-        <div className="w-px h-8 bg-white/10 mx-0.5 self-center" />
+        <div className="w-px h-7 bg-white/[0.12] mx-0.5 self-center" />
       )}
       <div
         ref={itemRef}
@@ -171,11 +168,24 @@ function DockItem({
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
-        {showTooltip && (
-          <div className="absolute -top-9 liquid-glass-heavy rounded-md px-2.5 py-1 text-[11px] text-white whitespace-nowrap pointer-events-none">
-            {item.label}
-          </div>
-        )}
+        <AnimatePresence>
+          {showTooltip && (
+            <motion.div
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.12 }}
+              style={{
+                backdropFilter: "blur(30px)",
+                WebkitBackdropFilter: "blur(30px)",
+                background: "rgba(30, 30, 30, 0.85)",
+              }}
+              className="absolute -top-9 rounded-md px-2.5 py-1 text-[11px] font-medium text-white/90 whitespace-nowrap pointer-events-none border border-white/10 shadow-lg"
+            >
+              {item.label}
+            </motion.div>
+          )}
+        </AnimatePresence>
         <Wrapper
           {...(wrapperProps as Record<string, unknown>)}
           className="block"
@@ -183,12 +193,20 @@ function DockItem({
           <motion.div
             animate={{ scale }}
             transition={{ type: "spring", stiffness: 400, damping: 25, mass: 0.5 }}
-            className={`w-11 h-11 rounded-xl bg-gradient-to-b ${item.gradient} flex items-center justify-center shadow-lg cursor-pointer`}
-            style={{ originY: 1 }}
+            className={`w-12 h-12 rounded-[13px] bg-gradient-to-br ${item.gradient} flex items-center justify-center cursor-pointer`}
+            style={{
+              originY: 1,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15)",
+            }}
           >
             {item.icon}
           </motion.div>
         </Wrapper>
+        <div
+          className={`w-1 h-1 rounded-full mt-1 transition-opacity duration-200 ${
+            isOpen ? "bg-white/70 opacity-100" : "opacity-0"
+          }`}
+        />
       </div>
     </>
   );

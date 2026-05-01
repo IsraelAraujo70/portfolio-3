@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type ReactNode, type CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface WindowChromeProps {
@@ -9,9 +9,13 @@ interface WindowChromeProps {
   children: ReactNode;
   isOpen?: boolean;
   onClose?: () => void;
+  onMinimize?: () => void;
+  onFocus?: () => void;
+  dragHandleProps?: Record<string, unknown>;
   sidebar?: ReactNode;
   className?: string;
   dark?: boolean;
+  style?: CSSProperties;
 }
 
 export function WindowChrome({
@@ -20,9 +24,13 @@ export function WindowChrome({
   children,
   isOpen = true,
   onClose,
+  onMinimize,
+  onFocus,
+  dragHandleProps,
   sidebar,
   className = "",
   dark = false,
+  style,
 }: WindowChromeProps) {
   const [hoverTrafficLights, setHoverTrafficLights] = useState(false);
 
@@ -32,26 +40,30 @@ export function WindowChrome({
     ? "bg-black/80 border border-white/[0.1]"
     : "liquid-glass";
 
-  const blurStyle = {
+  const blurStyle: CSSProperties = {
     backdropFilter: "blur(80px) saturate(120%)",
     WebkitBackdropFilter: "blur(80px) saturate(120%)",
+    ...style,
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          data-window
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          exit={{ opacity: 0, scale: 0.5, y: 300 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
           style={blurStyle}
           className={`rounded-xl overflow-hidden flex flex-col ${glassClass} ${className}`}
+          onPointerDown={onFocus}
         >
           <div
             className={`flex items-center h-12 px-4 border-b ${
               dark ? "border-white/[0.08]" : "border-white/[0.08]"
             } select-none shrink-0`}
+            {...dragHandleProps}
           >
             <div
               className="flex items-center gap-2 mr-4"
@@ -68,7 +80,10 @@ export function WindowChrome({
                   </svg>
                 )}
               </button>
-              <button className="w-3 h-3 rounded-full bg-[#febc2e] flex items-center justify-center">
+              <button
+                onClick={onMinimize}
+                className="w-3 h-3 rounded-full bg-[#febc2e] flex items-center justify-center"
+              >
                 {hoverTrafficLights && (
                   <svg viewBox="0 0 12 12" className="w-2 h-2">
                     <path d="M2 6h8" stroke="#995700" strokeWidth="1.5" strokeLinecap="round" />

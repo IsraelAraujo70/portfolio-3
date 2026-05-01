@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect, useCallback, type CSSProperties } from "react";
 import { WindowChrome } from "./window-chrome";
 import {
   personalInfo,
@@ -89,9 +88,20 @@ const CONTACT_TEXT = `
 interface TerminalWindowProps {
   isOpen: boolean;
   onClose: () => void;
+  onMinimize?: () => void;
+  onFocus?: () => void;
+  dragHandleProps?: Record<string, unknown>;
+  style?: CSSProperties;
 }
 
-export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
+export function TerminalWindow({
+  isOpen,
+  onClose,
+  onMinimize,
+  onFocus,
+  dragHandleProps,
+  style,
+}: TerminalWindowProps) {
   const [lines, setLines] = useState<TerminalLine[]>([
     { type: "system", content: "Welcome to Israel's terminal. Type 'help' for available commands." },
   ]);
@@ -183,47 +193,47 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
   };
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <WindowChrome
-          title="Terminal — israel@portfolio"
-          isOpen={isOpen}
-          onClose={onClose}
-          dark
-          className="fixed z-[45] w-[680px] max-w-[calc(100vw-2rem)] h-[420px] max-h-[calc(100vh-8rem)] top-[15%] left-[8%] flex flex-col shadow-2xl"
-        >
-          <div
-            ref={scrollRef}
-            className="flex-1 overflow-y-auto px-5 py-3 font-mono text-sm space-y-1"
-            onClick={() => inputRef.current?.focus()}
-          >
-            {lines.map((line, i) => (
-              <div key={i} className="whitespace-pre-wrap">
-                {line.type === "input" && <span className="text-cyan-400">{line.content}</span>}
-                {line.type === "output" && <span className="text-gray-300">{line.content}</span>}
-                {line.type === "error" && <span className="text-red-400/80">{line.content}</span>}
-                {line.type === "system" && <span className="text-gray-500">{line.content}</span>}
-              </div>
-            ))}
+    <WindowChrome
+      title="Terminal — israel@portfolio"
+      isOpen={isOpen}
+      onClose={onClose}
+      onMinimize={onMinimize}
+      onFocus={onFocus}
+      dragHandleProps={dragHandleProps}
+      style={style}
+      dark
+      className="fixed w-[680px] max-w-[calc(100vw-2rem)] h-[420px] max-h-[calc(100vh-8rem)] flex flex-col shadow-2xl"
+    >
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-5 py-3 font-mono text-sm space-y-1"
+        onClick={() => inputRef.current?.focus()}
+      >
+        {lines.map((line, i) => (
+          <div key={i} className="whitespace-pre-wrap">
+            {line.type === "input" && <span className="text-cyan-400">{line.content}</span>}
+            {line.type === "output" && <span className="text-gray-300">{line.content}</span>}
+            {line.type === "error" && <span className="text-red-400/80">{line.content}</span>}
+            {line.type === "system" && <span className="text-gray-500">{line.content}</span>}
           </div>
+        ))}
+      </div>
 
-          <form onSubmit={handleSubmit} className="px-5 py-3 border-t border-white/[0.08]">
-            <div className="flex items-center gap-2 font-mono text-sm">
-              <span className="text-cyan-400 shrink-0">{">"}</span>
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                disabled={isStreaming}
-                className="flex-1 bg-transparent text-white focus:outline-none placeholder:text-gray-700"
-                placeholder={isStreaming ? "Waiting for response..." : "Type a command..."}
-                autoComplete="off"
-                spellCheck={false}
-              />
-            </div>
-          </form>
-        </WindowChrome>
-      )}
-    </AnimatePresence>
+      <form onSubmit={handleSubmit} className="px-5 py-3 border-t border-white/[0.08]">
+        <div className="flex items-center gap-2 font-mono text-sm">
+          <span className="text-cyan-400 shrink-0">{">"}</span>
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={isStreaming}
+            className="flex-1 bg-transparent text-white focus:outline-none placeholder:text-gray-700"
+            placeholder={isStreaming ? "Waiting for response..." : "Type a command..."}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </div>
+      </form>
+    </WindowChrome>
   );
 }
