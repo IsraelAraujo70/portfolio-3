@@ -9,7 +9,7 @@ import {
 export interface CommandResult {
   output: string;
   isError?: boolean;
-  action?: "clear" | "exit";
+  action?: "clear" | "exit" | "tui";
   stream?: ReadableStream<Uint8Array>;
 }
 
@@ -24,7 +24,8 @@ const MOTD = [
   "  \x1b[38;5;81mprojects\x1b[0m     Personal projects",
   "  \x1b[38;5;81mopensource\x1b[0m   Open source contributions",
   "  \x1b[38;5;81mcontact\x1b[0m      Get in touch",
-  "  \x1b[38;5;81mchat <msg>\x1b[0m   Ask the AI anything",
+  "  \x1b[38;5;81mchat\x1b[0m         Interactive AI chat (TUI)",
+  "  \x1b[38;5;81mchat <msg>\x1b[0m   Quick question to the AI",
   "  \x1b[38;5;81mclear\x1b[0m        Clear terminal",
   "  \x1b[38;5;81mexit\x1b[0m         Close terminal",
   "",
@@ -39,7 +40,8 @@ const HELP_TEXT = [
   "  \x1b[38;5;81mprojects\x1b[0m     Personal projects",
   "  \x1b[38;5;81mopensource\x1b[0m   Open source contributions",
   "  \x1b[38;5;81mcontact\x1b[0m      Get in touch",
-  "  \x1b[38;5;81mchat <msg>\x1b[0m   Ask the AI anything",
+  "  \x1b[38;5;81mchat\x1b[0m         Interactive AI chat (TUI)",
+  "  \x1b[38;5;81mchat <msg>\x1b[0m   Quick question to the AI",
   "  \x1b[38;5;81mclear\x1b[0m        Clear terminal",
   "  \x1b[38;5;81mexit\x1b[0m         Close terminal",
 ].join("\r\n");
@@ -144,7 +146,7 @@ export function executeCommand(input: string): CommandResult {
 
   if (command === "chat") {
     if (!args) {
-      return { output: "\x1b[31mUsage: chat <your question>\x1b[0m", isError: true };
+      return { output: "", action: "tui" };
     }
     return startChat(args);
   }

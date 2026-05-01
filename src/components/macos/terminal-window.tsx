@@ -3,6 +3,7 @@
 import { useRef, useEffect, useCallback, type CSSProperties } from "react";
 import { WindowChrome } from "./window-chrome";
 import { getMotd, getPrompt, executeCommand } from "@/lib/terminal-sdk";
+import { TerminalTUI } from "@/lib/terminal-tui";
 
 interface TerminalWindowProps {
   isOpen: boolean;
@@ -28,6 +29,8 @@ export function TerminalWindow({
   const fitAddonRef = useRef<import("@xterm/addon-fit").FitAddon | null>(null);
   const lineBuffer = useRef("");
   const streamingRef = useRef(false);
+  const tuiRef = useRef<TerminalTUI | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
@@ -83,10 +86,27 @@ export function TerminalWindow({
     termRef.current = term;
     fitAddonRef.current = fitAddon;
 
+    const observer = new ResizeObserver(() => {
+      requestAnimationFrame(() => {
+        try {
+          fitAddon.fit();
+          if (tuiRef.current) {
+            tuiRef.current.resize(term.cols, term.rows);
+          }
+        } catch {}
+      });
+    });
+    observer.observe(containerRef.current);
+    resizeObserverRef.current = observer;
+
     term.write(getMotd());
     term.write(getPrompt());
 
     term.onData((data: string) => {
+      if (tuiRef.current) {
+        tuiRef.current.handleInput(data);
+        return;
+      }
       if (streamingRef.current) return;
 
       if (data === "\r") {
@@ -111,6 +131,10 @@ export function TerminalWindow({
         term.write(data);
       }
     });
+
+    term.onResize(({ cols, rows }) => {
+      tuiRef.current?.resize(cols, rows);
+    });
   }, []);
 
   const handleInput = useCallback(async (term: import("@xterm/xterm").Terminal, input: string) => {
@@ -129,6 +153,19 @@ export function TerminalWindow({
 
     if (result.action === "exit") {
       onCloseRef.current();
+      return;
+    }
+
+    if (result.action === "tui") {
+      tuiRef.current = new TerminalTUI({
+        write: (data: string) => term.write(data),
+        cols: term.cols,
+        rows: term.rows,
+        onExit: () => {
+          tuiRef.current = null;
+          term.write(getPrompt());
+        },
+      });
       return;
     }
 
@@ -163,16 +200,14 @@ export function TerminalWindow({
   }, [isOpen, initTerminal]);
 
   useEffect(() => {
-    if (!isOpen || !fitAddonRef.current) return;
-    const observer = new ResizeObserver(() => {
-      try {
-        fitAddonRef.current?.fit();
-      } catch {}
-    });
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+    if (!isOpen) {
+      resizeObserverRef.current?.disconnect();
+      resizeObserverRef.current = null;
     }
-    return () => observer.disconnect();
+    return () => {
+      resizeObserverRef.current?.disconnect();
+      resizeObserverRef.current = null;
+    };
   }, [isOpen]);
 
   useEffect(() => {
