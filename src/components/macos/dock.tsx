@@ -6,6 +6,7 @@ import {
   FolderOpen,
   Terminal,
   MessageCircle,
+  StickyNote,
   Mail,
 } from "lucide-react";
 import { GitHubIcon } from "@/components/ui/icons";
@@ -25,10 +26,11 @@ interface DockProps {
   onToggleTerminal: () => void;
   onToggleChat: () => void;
   onClickFinder: () => void;
+  onToggleNotes: () => void;
   openWindows: string[];
 }
 
-export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, openWindows }: DockProps) {
+export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNotes, openWindows }: DockProps) {
   const dockRef = useRef<HTMLDivElement>(null);
   const [mouseX, setMouseX] = useState<number | null>(null);
 
@@ -53,6 +55,13 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, openWindow
       icon: <MessageCircle size={26} className="text-white drop-shadow-sm" />,
       gradient: "from-green-400 to-emerald-600",
       onClick: onToggleChat,
+    },
+    {
+      id: "notes",
+      label: "Sticky Notes",
+      icon: <StickyNote size={26} className="text-white drop-shadow-sm" />,
+      gradient: "from-amber-400 to-yellow-500",
+      onClick: onToggleNotes,
       separator: true,
     },
     {

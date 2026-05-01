@@ -1,12 +1,13 @@
 "use client";
 
-import { useReducer, useEffect, useCallback, useMemo, useState } from "react";
+import { useReducer, useEffect, useCallback, useMemo, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { DesktopWallpaper } from "./desktop-wallpaper";
 import { FinderWindow } from "./finder-window";
 import { TerminalWindow } from "./terminal-window";
 import { ChatWindow } from "./chat-window";
 import { Dock } from "./dock";
+import { StickyNotesLayer, StickyNoteForm } from "./sticky-notes";
 import { useDrag } from "@/hooks/use-drag";
 import { useResize } from "@/hooks/use-resize";
 
@@ -337,6 +338,8 @@ function WindowWrapper({
 
 export function Desktop() {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  const notesRefetchRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const vw = window.innerWidth;
@@ -418,6 +421,7 @@ export function Desktop() {
   return (
     <div className="h-screen w-screen overflow-hidden relative">
       <DesktopWallpaper />
+      <StickyNotesLayer refetchRef={notesRefetchRef} />
 
       <WindowWrapper id="finder" state={state} dispatch={dispatch}>
         {({ onClose, onMinimize, onMaximize, onFocus, dragHandleProps, style }) => (
@@ -462,10 +466,17 @@ export function Desktop() {
         )}
       </WindowWrapper>
 
+      <StickyNoteForm
+        isOpen={showNoteForm}
+        onClose={() => setShowNoteForm(false)}
+        onNoteAdded={() => notesRefetchRef.current?.()}
+      />
+
       <Dock
         onToggleTerminal={handleDockTerminal}
         onToggleChat={handleDockChat}
         onClickFinder={handleDockFinder}
+        onToggleNotes={() => setShowNoteForm((v) => !v)}
         openWindows={openWindows}
       />
     </div>
