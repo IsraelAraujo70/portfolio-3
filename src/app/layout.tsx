@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import Script from "next/script";
+import { personalInfo, projects, skillCategories } from "@/lib/resume-data";
 import "@xterm/xterm/css/xterm.css";
 import "./globals.css";
 
@@ -20,30 +21,80 @@ const caveat = Caveat({
 });
 
 const metaPixelId = "1553632319675817";
+const siteUrl = "https://israeldeveloper.com.br";
+const siteName = "Israel Araújo Portfolio";
+const title = "Israel Araújo | Full Stack Engineer";
+const description =
+  "Full Stack Software Engineer in Brazil building production systems with Python, TypeScript, Go, Rust, AI, microservices, and cloud architecture.";
 
 export const metadata: Metadata = {
-  title: "Israel Araújo | Full Stack Engineer",
-  description:
-    "Full Stack Software Engineer specializing in Python, TypeScript, Go & Rust. Open source contributor to Zed Editor (23k+ stars). Building production systems with AI, microservices, and cloud architecture.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: title,
+    template: "%s | Israel Araújo",
+  },
+  description,
+  applicationName: siteName,
+  authors: [{ name: personalInfo.fullName, url: siteUrl }],
+  creator: personalInfo.fullName,
+  publisher: personalInfo.fullName,
   keywords: [
+    "Israel Araújo",
+    "Israel Araujo",
+    "Israel Araújo de Oliveira",
     "software engineer",
     "full stack developer",
+    "full stack engineer Brazil",
+    "backend engineer",
     "python",
     "typescript",
+    "next.js",
+    "react",
     "go",
     "rust",
     "AI",
+    "LLM",
+    "cloud architecture",
+    "microservices",
     "open source",
-    "remote",
+    "remote software engineer",
   ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Israel Araújo | Full Stack Engineer",
-    description:
-      "Full Stack Engineer building production systems with Python, TypeScript, Go & Rust. Open source contributor. AI enthusiast.",
-    url: "https://israeldeveloper.com.br",
+    title,
+    description,
+    url: "/",
+    siteName,
+    images: [
+      {
+        url: "/profile-picture.jpeg",
+        alt: "Israel Araújo de Oliveira",
+      },
+    ],
+    locale: "en_US",
     type: "website",
   },
-  robots: "index, follow",
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    creator: "@calop1337",
+    images: ["/profile-picture.jpeg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  category: "technology",
 };
 
 export const viewport: Viewport = {
@@ -59,12 +110,62 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": `${siteUrl}/#person`,
+        name: personalInfo.fullName,
+        alternateName: personalInfo.name,
+        jobTitle: personalInfo.title,
+        url: siteUrl,
+        image: `${siteUrl}/profile-picture.jpeg`,
+        email: `mailto:${personalInfo.email}`,
+        telephone: "+5535997421900",
+        address: {
+          "@type": "PostalAddress",
+          addressCountry: "BR",
+        },
+        sameAs: [
+          personalInfo.github,
+          personalInfo.linkedin,
+          personalInfo.x,
+          personalInfo.whatsapp,
+        ],
+        knowsAbout: skillCategories.flatMap((category) => category.items),
+        hasPart: projects.map((project) => ({
+          "@type": "CreativeWork",
+          name: project.name,
+          description: project.description,
+          url: project.github,
+          keywords: project.tech.join(", "),
+        })),
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        name: siteName,
+        url: siteUrl,
+        description,
+        inLanguage: "en",
+        about: { "@id": `${siteUrl}/#person` },
+      },
+    ],
+  };
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} antialiased`}
     >
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         {children}
         <Script id="meta-pixel" strategy="afterInteractive">
           {`

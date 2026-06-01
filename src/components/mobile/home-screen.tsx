@@ -7,7 +7,7 @@ import {
   StickyNote,
   Mail,
 } from "lucide-react";
-import { GitHubIcon, XIcon } from "@/components/ui/icons";
+import { GitHubIcon, WhatsAppIcon, XIcon } from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
 import { AppIcon, type AppIconConfig } from "./app-icon";
 
@@ -77,6 +77,13 @@ export function HomeScreen({ onLaunch }: HomeScreenProps) {
         />
       ),
       href: personalInfo.linkedin,
+    },
+    {
+      id: "whatsapp",
+      label: "WhatsApp",
+      gradient: "from-[#25D366] to-[#128C7E]",
+      icon: <WhatsAppIcon width={32} height={32} className="text-white drop-shadow-sm" />,
+      href: personalInfo.whatsapp,
     },
     {
       id: "x",
