@@ -25,18 +25,14 @@ ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 ENV DATABASE_PATH=/app/data/notes.db
 
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
-
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=native-deps /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 COPY --from=native-deps /app/node_modules/bindings ./node_modules/bindings
 COPY --from=native-deps /app/node_modules/file-uri-to-path ./node_modules/file-uri-to-path
 
-RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
-
-USER nextjs
+# ponytail: run as root — Railway mounts the /app/data volume as root, so a
+# non-root user can't write the SQLite db. Container isolation is handled by Railway.
 EXPOSE 3000
 CMD ["node", "server.js"]
