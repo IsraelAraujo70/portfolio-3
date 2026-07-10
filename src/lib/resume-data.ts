@@ -67,6 +67,24 @@ export const experience = [
 
 export const projects = [
   {
+    name: "Notion Clone",
+    tagline: "Collaborative Block Workspace",
+    description:
+      "Portfolio-grade collaborative workspace: block model, LWW operation log, keyboard-first editor, realtime WebSocket sync, permission-scoped search, trash/restore, and AI that writes through the same op path. Rust backend + Next.js frontend + PostgreSQL/pgvector.",
+    tech: ["Rust", "Axum", "Next.js", "PostgreSQL", "pgvector"],
+    github: "https://github.com/IsraelAraujo70/notion-clone",
+    stats: "30 commits · 275 files",
+  },
+  {
+    name: "Drive Clone",
+    tagline: "Personal Cloud Storage",
+    description:
+      "Google Drive-like app with auth, folders, resumable multipart uploads, share by email, trash/restore, filename search, and quota. Rust API (Axum/SQLx) + Next.js; file bytes on S3-compatible storage; Railway-first deploy.",
+    tech: ["Rust", "Axum", "Next.js", "PostgreSQL", "S3"],
+    github: "https://github.com/IsraelAraujo70/drive-clone",
+    stats: "54 commits · 307 files",
+  },
+  {
     name: "Prism",
     tagline: "Desktop GitHub PR Client",
     description:
@@ -76,6 +94,15 @@ export const projects = [
     stats: "61 commits · 94 files",
   },
   {
+    name: "Lurian AI",
+    tagline: "AI-Powered Personal Finance",
+    description:
+      "Full stack finance monorepo — React/Vite (web) + Expo (mobile) + Rust API (Axum/SQLx). Multi-tenant workspaces with RBAC, OpenRouter AI via backend, JWT auth, and Kamal deploy.",
+    tech: ["Rust", "Axum", "React", "Expo", "PostgreSQL"],
+    github: "https://github.com/IsraelAraujo70/lurian-ai",
+    stats: "86 commits · monorepo",
+  },
+  {
     name: "Flux-Oriented Architecture",
     tagline: "Backend Flow Orchestration Framework",
     description:
@@ -83,15 +110,6 @@ export const projects = [
     tech: ["TypeScript", "Node.js", "npm"],
     github: "https://github.com/IsraelAraujo70/flux-oriented-architecture",
     stats: "Published on npm · 15 test files",
-  },
-  {
-    name: "Money-2099",
-    tagline: "AI-Powered Personal Finance",
-    description:
-      "Full stack monorepo — Next.js (web) + React Native (mobile) + Convex (serverless). AI financial assistant via OpenRouter, auto-categorization, budgets, debts, investments.",
-    tech: ["Next.js", "React Native", "Convex", "OpenRouter"],
-    github: "https://github.com/IsraelAraujo70/money-2099",
-    stats: "251 files · 56 commits",
   },
   {
     name: "OpenVoice",
@@ -222,10 +240,12 @@ Databases: PostgreSQL, DynamoDB, Redis, SQLite
 Testing: pytest, Jest, Cypress, Playwright, E2E, TDD
 
 ## Notable Projects
-1. Prism — Desktop GitHub PR client (Tauri v2 + Rust + TypeScript). Full PR review, unified diffs, multi-line drag-select comments, notification inbox, auto-updates. 61 commits, 94 files.
-2. Flux-Oriented Architecture — Original backend framework published on npm. Declarative JSON-based flow orchestration, plugin system, CLI with 6 commands, interpolation engine, validator. 15 test files.
-3. Money-2099 — AI-powered finance app (Next.js + React Native + Convex + OpenRouter). AI financial assistant, auto-categorization, budgets, debts, investments. 251 files.
-4. OpenVoice — Voice-to-clipboard transcription (Rust + Tauri v2 + OpenRouter). Push-to-talk dictation, Wayland-native Linux app.
+1. Notion Clone — Collaborative block workspace (Rust + Axum + Next.js + PostgreSQL/pgvector). Block model, LWW op log, realtime WebSocket sync, search, trash, AI via same op path. 30 commits, 275 files.
+2. Drive Clone — Personal cloud storage (Rust + Axum + Next.js + S3 + PostgreSQL). Resumable multipart uploads, folders, share by email, trash, search, quota. 54 commits, 307 files.
+3. Prism — Desktop GitHub PR client (Tauri v2 + Rust + TypeScript). Full PR review, unified diffs, multi-line drag-select comments, notification inbox, auto-updates. 61 commits, 94 files.
+4. Lurian AI — AI-powered finance monorepo (Rust/Axum API + React/Vite + Expo). Multi-tenant RBAC, OpenRouter via backend, JWT auth, Kamal deploy. 86 commits.
+5. Flux-Oriented Architecture — Original backend framework published on npm. Declarative JSON-based flow orchestration, plugin system, CLI with 6 commands, interpolation engine, validator. 15 test files.
+6. OpenVoice — Voice-to-clipboard transcription (Rust + Tauri v2 + OpenRouter). Push-to-talk dictation, Wayland-native Linux app.
 
 ## Open Source (11 PRs to repos with 255k+ combined stars)
 - OpenCode (TypeScript, 152k+ stars): 4 PRs — multi-account auth with auto-rotation, native Wayland toggle, orphaned sidecar cleanup, UI fix
