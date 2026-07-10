@@ -12,7 +12,7 @@ export const personalInfo = {
 };
 
 export const stats = [
-  { label: "PRs Shipped at Current Role", value: "438" },
+  { label: "PRs Shipped at GarantiaBR", value: "438" },
   { label: "Stars in OSS Repos I Contributed To", value: "255k+" },
   { label: "Provider Integrations in Prod", value: "10+" },
   { label: "Production Repos Owned", value: "8" },
@@ -30,9 +30,22 @@ export const skillCategories = [
 
 export const experience = [
   {
+    company: "Metropolis Comics",
+    role: "TypeScript / PHP / Terraform Developer",
+    period: "Apr 2026 – Present",
+    highlights: [
+      "Built the Message Reservation System (MRS) from scratch — automated weekly MMS campaigns where customers reply BUY to reserve comics first-come, first-served",
+      "Owned the full stack monorepo: Next.js admin panel, TypeScript AWS Lambdas (sender, receiver, CSV import worker), and shared domain types",
+      "Provisioned AWS infrastructure as code with Terraform — DynamoDB, Lambda, SQS FIFO, API Gateway, Cognito, CloudWatch, IAM",
+      "Enforced reservation atomicity with DynamoDB transactions and conditional writes on stock; SQS FIFO ordering per phone via MessageGroupId",
+      "Integrated Twilio MMS/SMS and the Laravel (PHP) legacy API for product/customer compatibility and admin flows",
+      "Shipped LocalStack local-dev stack and Buddy CI/CD pipelines deploying admin, lambdas, and Terraform on push to staging/main",
+    ],
+  },
+  {
     company: "GarantiaBR",
     role: "Full Stack Python Developer",
-    period: "Oct 2025 – Present",
+    period: "Oct 2025 – May 2026",
     highlights: [
       "Stepped into tech lead responsibilities after the previous lead left — took ownership of architectural decisions and mentorship across 8 production repositories",
       "Shipped 438 PRs in 6 months across backend, frontend, infra, and CI/CD — averaging ~3 PRs/day across the stack",
@@ -212,8 +225,18 @@ export const systemPrompt = `You are the AI assistant on Israel Araújo's portfo
 ## About Israel
 Full Stack Software Engineer with 2+ years of experience. Based in Brazil, fluent in Portuguese and English. Ships production systems in Python, TypeScript, Go, and Rust. Open source contributor to repos with 255k+ combined stars.
 
-## Current Role — GarantiaBR (Oct 2025 – Present)
-Full Stack Python Developer. Stepped into tech lead responsibilities when the previous lead left — had the deepest context on business and codebase. Owns 8 production repositories. Shipped 438 PRs in 6 months across backend, frontend, infra, and CI/CD.
+## Current Role — Metropolis Comics (Apr 2026 – Present)
+TypeScript / PHP / Terraform Developer. Building the Message Reservation System (MRS): automated weekly MMS product campaigns for Metropolis Comics; customers reply BUY to reserve first-come, first-served.
+
+Key outcomes:
+- Greenfield monorepo: Next.js admin, TypeScript Lambdas (sender/receiver/import-worker), shared types
+- Terraform AWS infra: DynamoDB, Lambda, SQS FIFO, API Gateway, Cognito, CloudWatch, IAM
+- Atomic reservations via DynamoDB transactions + conditional stock writes; SQS FIFO per phone
+- Twilio MMS/SMS + Laravel (PHP) legacy API integration
+- LocalStack local-dev and Buddy CI/CD (staging/prod on branch push)
+
+## Previous — GarantiaBR (Oct 2025 – May 2026)
+Full Stack Python Developer. Stepped into tech lead responsibilities when the previous lead left. Owned 8 production repositories. Shipped 438 PRs in ~7 months across backend, frontend, infra, and CI/CD. Left May 29, 2026.
 
 Key outcomes:
 - Built multi-tenant SaaS from scratch: row-level security, RBAC with permission matrix, audit logging with real IP propagation, org hierarchy modeling
