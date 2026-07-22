@@ -10,8 +10,9 @@ export function DesktopWallpaper() {
         alt=""
         fill
         priority
+        sizes="100vw"
         className="object-cover"
-        quality={90}
+        quality={55}
       />
       <div className="absolute inset-0 bg-black/20" />
     </div>

@@ -22,7 +22,7 @@ export function FinderAbout() {
           initial={{ opacity: 0, x: -15 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-50px" }}
-          style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-6"
+          className="liquid-glass-light rounded-xl p-6"
         >
           <p className="text-gray-300 text-sm leading-relaxed mb-4">
             I build backend systems that handle real money and real
@@ -62,7 +62,7 @@ export function FinderAbout() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-4 text-center"
+                className="liquid-glass-light rounded-xl p-4 text-center"
               >
                 <p className="text-xl font-bold text-cyan-400">{stat.value}</p>
                 <p className="text-[11px] text-gray-500 mt-1">{stat.label}</p>
@@ -70,7 +70,7 @@ export function FinderAbout() {
             ))}
           </div>
 
-          <div style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-5 flex-1">
+          <div className="liquid-glass-light rounded-xl p-5 flex-1">
             <p className="text-xs font-medium text-gray-400 mb-2">Tech Stack</p>
             <div className="flex flex-wrap gap-1.5">
               {skillCategories

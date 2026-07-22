@@ -43,8 +43,8 @@ export function WindowChrome({
     : "liquid-glass";
 
   const blurStyle: CSSProperties = {
-    backdropFilter: "blur(80px) saturate(120%)",
-    WebkitBackdropFilter: "blur(80px) saturate(120%)",
+    backdropFilter: "blur(24px) saturate(115%)",
+    WebkitBackdropFilter: "blur(24px) saturate(115%)",
     ...style,
   };
 

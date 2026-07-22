@@ -4,7 +4,6 @@ import {
   Home,
   User,
   FolderOpen,
-  Cpu,
   Briefcase,
   GitBranch,
   Mail,

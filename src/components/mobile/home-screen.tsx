@@ -7,7 +7,7 @@ import {
   StickyNote,
   Mail,
 } from "lucide-react";
-import { GitHubIcon, WhatsAppIcon, XIcon } from "@/components/ui/icons";
+import { GitHubIcon, LinkedInIcon, WhatsAppIcon, XIcon } from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
 import { AppIcon, type AppIconConfig } from "./app-icon";
 
@@ -69,13 +69,7 @@ export function HomeScreen({ onLaunch }: HomeScreenProps) {
       id: "linkedin",
       label: "LinkedIn",
       gradient: "from-[#0077B5] to-[#005fa3]",
-      icon: (
-        <img
-          src="/linkedin-icon.svg"
-          alt=""
-          className="w-9 h-9 brightness-0 invert drop-shadow-sm"
-        />
-      ),
+      icon: <LinkedInIcon width={36} height={36} className="text-white drop-shadow-sm" />,
       href: personalInfo.linkedin,
     },
     {
@@ -128,9 +122,9 @@ export function HomeScreen({ onLaunch }: HomeScreenProps) {
         </div>
         <div
           style={{
-            backdropFilter: "blur(40px) saturate(160%)",
-            WebkitBackdropFilter: "blur(40px) saturate(160%)",
-            background: "rgba(255, 255, 255, 0.18)",
+            backdropFilter: "blur(18px) saturate(130%)",
+            WebkitBackdropFilter: "blur(18px) saturate(130%)",
+            background: "rgba(24, 24, 30, 0.68)",
             border: "1px solid rgba(255, 255, 255, 0.22)",
           }}
           className="grid grid-cols-4 gap-3 px-3 py-3 rounded-[28px]"

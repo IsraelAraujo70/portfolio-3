@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState, type MouseEvent, type ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { type ReactNode } from "react";
+import { motion } from "framer-motion";
 import {
   FolderOpen,
   Terminal,
@@ -9,7 +9,7 @@ import {
   StickyNote,
   Mail,
 } from "lucide-react";
-import { GitHubIcon, WhatsAppIcon, XIcon } from "@/components/ui/icons";
+import { GitHubIcon, LinkedInIcon, WhatsAppIcon, XIcon } from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
 
 interface DockItemConfig {
@@ -31,9 +31,6 @@ interface DockProps {
 }
 
 export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNotes, openWindows }: DockProps) {
-  const dockRef = useRef<HTMLDivElement>(null);
-  const [mouseX, setMouseX] = useState<number | null>(null);
-
   const items: DockItemConfig[] = [
     {
       id: "finder",
@@ -81,7 +78,7 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
     {
       id: "linkedin",
       label: "LinkedIn",
-      icon: <img src="/linkedin-icon.svg" alt="LinkedIn" className="w-7 h-7 brightness-0 invert drop-shadow-sm" />,
+      icon: <LinkedInIcon width={27} height={27} className="text-white drop-shadow-sm" />,
       gradient: "from-[#0077B5] to-[#005fa3]",
       href: personalInfo.linkedin,
     },
@@ -101,14 +98,6 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
     },
   ];
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!dockRef.current) return;
-    const rect = dockRef.current.getBoundingClientRect();
-    setMouseX(e.clientX - rect.left);
-  };
-
-  const handleMouseLeave = () => setMouseX(null);
-
   const windowIdMap: Record<string, string> = {
     finder: "finder",
     terminal: "terminal",
@@ -118,19 +107,16 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
   return (
     <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[60]">
       <motion.div
-        ref={dockRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        initial={{ y: 80, opacity: 0 }}
+        initial={{ y: 48, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
+        transition={{ duration: 0.24, ease: "easeOut" }}
         style={{
-          backdropFilter: "blur(50px) saturate(150%)",
-          WebkitBackdropFilter: "blur(50px) saturate(150%)",
-          background: "rgba(255, 255, 255, 0.08)",
+          backdropFilter: "blur(20px) saturate(130%)",
+          WebkitBackdropFilter: "blur(20px) saturate(130%)",
+          background: "rgba(20, 20, 24, 0.72)",
           border: "1px solid rgba(255, 255, 255, 0.18)",
           boxShadow:
-            "0 8px 40px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.2), inset 0 -0.5px 0 rgba(255, 255, 255, 0.05)",
+            "0 8px 32px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.2)",
         }}
         className="flex items-end gap-1.5 px-2.5 pt-2 pb-1.5 rounded-2xl"
       >
@@ -139,8 +125,6 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
             key={item.id}
             item={item}
             index={index}
-            mouseX={mouseX}
-            dockRef={dockRef}
             isOpen={openWindows.includes(windowIdMap[item.id] ?? "")}
           />
         ))}
@@ -152,78 +136,42 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
 function DockItem({
   item,
   index,
-  mouseX,
-  dockRef,
   isOpen,
 }: {
   item: DockItemConfig;
   index: number;
-  mouseX: number | null;
-  dockRef: React.RefObject<HTMLDivElement | null>;
   isOpen: boolean;
 }) {
-  const itemRef = useRef<HTMLDivElement>(null);
-  const [showTooltip, setShowTooltip] = useState(false);
-
-  let scale = 1;
-  if (mouseX !== null && itemRef.current && dockRef.current) {
-    const rect = itemRef.current.getBoundingClientRect();
-    const dockRect = dockRef.current.getBoundingClientRect();
-    const itemCenter = rect.left + rect.width / 2 - dockRect.left;
-    const distance = Math.abs(mouseX - itemCenter);
-    const maxDistance = 120;
-    scale = 1 + 0.6 * Math.max(0, 1 - distance / maxDistance);
-  }
-
   const Wrapper = item.href ? "a" : "button";
   const wrapperProps = item.href
     ? { href: item.href, target: "_blank", rel: "noopener noreferrer" }
-    : { onClick: item.onClick };
+    : { onClick: item.onClick, type: "button" };
 
   return (
     <>
       {item.separator && index > 0 && (
         <div className="w-px h-7 bg-white/[0.12] mx-0.5 self-center" />
       )}
-      <div
-        ref={itemRef}
-        className="relative flex flex-col items-center"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-      >
-        <AnimatePresence>
-          {showTooltip && (
-            <motion.div
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 4 }}
-              transition={{ duration: 0.12 }}
-              style={{
-                backdropFilter: "blur(30px)",
-                WebkitBackdropFilter: "blur(30px)",
-                background: "rgba(30, 30, 30, 0.85)",
-              }}
-              className="absolute -top-9 rounded-md px-2.5 py-1 text-[11px] font-medium text-white/90 whitespace-nowrap pointer-events-none border border-white/10 shadow-lg"
-            >
-              {item.label}
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <div className="relative flex flex-col items-center group">
+        <div
+          role="tooltip"
+          className="absolute -top-9 rounded-md px-2.5 py-1 text-[11px] font-medium text-white/90 whitespace-nowrap pointer-events-none border border-white/10 bg-neutral-900/95 shadow-lg opacity-0 translate-y-1 transition-[opacity,transform] duration-150 group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0"
+        >
+          {item.label}
+        </div>
         <Wrapper
           {...(wrapperProps as Record<string, unknown>)}
-          className="block"
+          aria-label={item.label}
+          className="block origin-bottom transition-transform duration-150 ease-out hover:scale-125 hover:-translate-y-1 focus-visible:scale-110 focus-visible:-translate-y-0.5 focus-visible:outline-none"
         >
-          <motion.div
-            animate={{ scale }}
-            transition={{ type: "spring", stiffness: 400, damping: 25, mass: 0.5 }}
+          <div
             className={`w-12 h-12 rounded-[13px] bg-gradient-to-br ${item.gradient} flex items-center justify-center cursor-pointer`}
             style={{
-              originY: 1,
               boxShadow: "0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15)",
             }}
           >
             {item.icon}
-          </motion.div>
+          </div>
         </Wrapper>
         <div
           className={`w-1 h-1 rounded-full mt-1 transition-opacity duration-200 ${

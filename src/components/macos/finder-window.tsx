@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from "react";
+import Image from "next/image";
 import { WindowChrome } from "./window-chrome";
 import { FinderSidebar } from "./finder-sidebar";
 import { FinderHero } from "./sections/finder-hero";
@@ -74,7 +75,7 @@ export function FinderWindow({
     <WindowChrome
       title="Israel Araujo — Portfolio"
       icon={
-        <img src="/dev-icon.svg" alt="" className="w-4 h-4" />
+        <Image src="/dev-icon.svg" alt="" width={16} height={16} />
       }
       onClose={onClose}
       onMinimize={onMinimize}

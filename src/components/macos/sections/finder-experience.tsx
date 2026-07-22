@@ -32,7 +32,7 @@ export function FinderExperience() {
             >
               <div className="absolute left-3 top-6 w-2 h-2 rounded-full bg-cyan-400 -translate-x-[3.5px]" />
 
-              <div style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-5">
+              <div className="liquid-glass-light rounded-xl p-5">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
                   <div>
                     <h3 className="text-base font-bold text-white">{job.company}</h3>

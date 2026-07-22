@@ -37,6 +37,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ```bash
 npm test
 npm run eval
+npm run eval:lighthouse -- path/to/lighthouse-report.json
 npm run lint
 npm run build
 ```

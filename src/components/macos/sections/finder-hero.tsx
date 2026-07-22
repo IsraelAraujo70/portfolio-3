@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { MessageCircle, ArrowDown } from "lucide-react";
 import { personalInfo } from "@/lib/resume-data";
 
@@ -15,9 +16,12 @@ export function FinderHero({ onOpenChat }: { onOpenChat: () => void }) {
           className="shrink-0"
         >
           <div className="w-28 h-28 md:w-36 md:h-36 rounded-full liquid-glass-light p-1 flex items-center justify-center">
-            <img
+            <Image
               src="/profile-picture.jpeg"
               alt={personalInfo.fullName}
+              width={144}
+              height={144}
+              sizes="(min-width: 768px) 144px, 112px"
               className="w-full h-full rounded-full object-cover"
             />
           </div>

@@ -25,7 +25,10 @@ export function TerminalContent({
   const tuiRef = useRef<TerminalTUI | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const onExitRef = useRef(onExit);
-  onExitRef.current = onExit;
+
+  useEffect(() => {
+    onExitRef.current = onExit;
+  }, [onExit]);
 
   const handleInput = useCallback(async (term: import("@xterm/xterm").Terminal, input: string) => {
     if (!input.trim()) {

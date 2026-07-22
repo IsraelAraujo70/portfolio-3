@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   serverExternalPackages: ["better-sqlite3"],
   images: {
-    qualities: [75, 90],
+    qualities: [55, 75, 90],
   },
 };
 

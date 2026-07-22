@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
 export interface AppIconConfig {
@@ -22,21 +19,18 @@ export function AppIcon({
   icon,
   onTap,
   href,
-  morphLayoutId,
 }: AppIconProps) {
   const tile = (
-    <motion.div
-      layoutId={morphLayoutId}
+    <div
       className={`w-full aspect-square bg-gradient-to-br ${gradient} flex items-center justify-center`}
       style={{
         borderRadius: "22%",
         boxShadow:
           "0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15)",
       }}
-      transition={{ type: "spring", stiffness: 320, damping: 30 }}
     >
       {icon}
-    </motion.div>
+    </div>
   );
 
   const labelEl = label ? (
@@ -54,25 +48,22 @@ export function AppIcon({
         href={href}
         target={href.startsWith("mailto:") ? undefined : "_blank"}
         rel="noopener noreferrer"
-        className="flex flex-col items-center touch-manipulation w-full"
+        className="flex flex-col items-center touch-manipulation w-full active:scale-[0.92] transition-transform"
       >
-        <motion.div whileTap={{ scale: 0.92 }} className="w-full">
-          {tile}
-        </motion.div>
+        {tile}
         {labelEl}
       </a>
     );
   }
 
   return (
-    <motion.button
+    <button
       type="button"
       onClick={onTap}
-      whileTap={{ scale: 0.92 }}
-      className="flex flex-col items-center touch-manipulation w-full"
+      className="flex flex-col items-center touch-manipulation w-full active:scale-[0.92] transition-transform"
     >
       {tile}
       {labelEl}
-    </motion.button>
+    </button>
   );
 }

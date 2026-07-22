@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type PanInfo } from "framer-motion";
+import { useRef } from "react";
 
 interface HomeIndicatorProps {
   appOpen: boolean;
@@ -8,25 +8,29 @@ interface HomeIndicatorProps {
 }
 
 export function HomeIndicator({ appOpen, onClose }: HomeIndicatorProps) {
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (appOpen && info.offset.y < -40) onClose();
-  };
+  const pointerStartY = useRef<number | null>(null);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[65] flex justify-center pointer-events-none">
-      <motion.div
-        drag="y"
-        dragConstraints={{ top: -120, bottom: 0 }}
-        dragElastic={{ top: 0.6, bottom: 0 }}
-        dragSnapToOrigin
-        onDragEnd={handleDragEnd}
-        onTap={() => {
-          if (appOpen) onClose();
+      <button
+        type="button"
+        aria-label={appOpen ? "Close app" : "Home indicator"}
+        onPointerDown={(event) => {
+          pointerStartY.current = event.clientY;
+          event.currentTarget.setPointerCapture(event.pointerId);
         }}
-        className="pointer-events-auto px-12 pt-3 pb-1.5 touch-none cursor-pointer"
+        onPointerUp={(event) => {
+          const startY = pointerStartY.current;
+          pointerStartY.current = null;
+          if (appOpen && startY !== null && event.clientY - startY < -40) {
+            onClose();
+          }
+        }}
+        onClick={() => appOpen && onClose()}
+        className="pointer-events-auto px-12 pt-3 pb-1.5 touch-none cursor-pointer active:-translate-y-1 transition-transform"
       >
         <div className="w-32 h-[5px] rounded-full bg-white/95" />
-      </motion.div>
+      </button>
     </div>
   );
 }

@@ -26,7 +26,7 @@ export function FinderOpenSource() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ delay: i * 0.05 }}
-            style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-5"
+            className="liquid-glass-light rounded-xl p-5"
           >
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
               <div className="flex items-center gap-2">

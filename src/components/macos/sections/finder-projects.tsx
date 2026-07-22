@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
 import { GitHubIcon } from "@/components/ui/icons";
 import { projects } from "@/lib/resume-data";
 
@@ -27,7 +26,7 @@ export function FinderProjects() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ delay: i * 0.05 }}
-            style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-5 flex flex-col hover:bg-white/[0.08] transition-all duration-300"
+            className="liquid-glass-light rounded-xl p-5 flex flex-col hover:bg-white/[0.08] transition-colors duration-200"
           >
             <div className="flex items-start justify-between mb-2">
               <div>

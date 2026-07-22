@@ -58,7 +58,7 @@ export function FinderContact() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ delay: 0.05 }}
-        style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-6"
+        className="liquid-glass-light rounded-xl p-6"
       >
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           {contactLinks.map(({ icon: Icon, label, value, href, isSvg }) => (
