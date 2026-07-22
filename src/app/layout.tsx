@@ -23,9 +23,9 @@ const caveat = Caveat({
 const metaPixelId = "1553632319675817";
 const siteUrl = "https://israeldeveloper.com.br";
 const siteName = "Israel Araújo Portfolio";
-const title = "Israel Araújo | Full Stack Engineer";
+const title = "Israel Araújo | Mid-Level Backend / Full-Stack Engineer";
 const description =
-  "Full Stack Software Engineer in Brazil building production systems with Python, TypeScript, Go, Rust, AI, microservices, and cloud architecture.";
+  "Mid-level backend and full-stack engineer in Brazil building production SaaS, integrations, and event-driven systems with Python, TypeScript, and AWS.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

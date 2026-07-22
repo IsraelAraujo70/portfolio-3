@@ -33,11 +33,11 @@ const ABOUT_TEXT = `
 ${personalInfo.fullName}
 ${personalInfo.title} | ${personalInfo.location}
 
-Full Stack Engineer with 2+ years building production systems
-in Python, TypeScript, Go & Rust.
+Mid-Level Backend / Full-Stack Engineer with 3+ years
+building production systems in Python, TypeScript & AWS.
 
-Open source contributor to Zed Editor (23k+ stars).
-1,500+ commits in the last 7 months. 100 public repos.
+Experienced with SaaS, provider integrations, event-driven
+architecture, and infrastructure as code.
 
 Currently open to international/remote opportunities.
 `.trim();

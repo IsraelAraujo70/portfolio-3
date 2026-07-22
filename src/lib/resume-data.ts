@@ -1,8 +1,8 @@
 export const personalInfo = {
   name: "Israel Araújo",
   fullName: "Israel Araújo de Oliveira",
-  title: "Full Stack Engineer",
-  subtitle: "Building production systems with Python, TypeScript, Go & Rust",
+  title: "Mid-Level Backend / Full-Stack Engineer",
+  subtitle: "Building SaaS, integrations, and event-driven systems with Python, TypeScript & AWS",
   location: "Brazil",
   email: "israelaraujodeoliveira@gmail.com",
   linkedin: "https://linkedin.com/in/araisr",
@@ -12,10 +12,10 @@ export const personalInfo = {
 };
 
 export const stats = [
-  { label: "PRs Shipped at GarantiaBR", value: "438" },
-  { label: "Stars in OSS Repos I Contributed To", value: "255k+" },
+  { label: "Years of Professional Experience", value: "3+" },
   { label: "Provider Integrations in Prod", value: "10+" },
   { label: "Production Repos Owned", value: "8" },
+  { label: "Promotions in 9 Months", value: "2" },
 ];
 
 export const skillCategories = [
@@ -30,16 +30,15 @@ export const skillCategories = [
 
 export const experience = [
   {
-    company: "Metropolis Comics",
-    role: "TypeScript / PHP / Terraform Developer",
+    company: "ComicConnect",
+    role: "TypeScript / PHP / Terraform Developer (Contract)",
     period: "Apr 2026 – Present",
     highlights: [
-      "Built the Message Reservation System (MRS) from scratch — automated weekly MMS campaigns where customers reply BUY to reserve comics first-come, first-served",
-      "Owned the full stack monorepo: Next.js admin panel, TypeScript AWS Lambdas (sender, receiver, CSV import worker), and shared domain types",
-      "Provisioned AWS infrastructure as code with Terraform — DynamoDB, Lambda, SQS FIFO, API Gateway, Cognito, CloudWatch, IAM",
-      "Enforced reservation atomicity with DynamoDB transactions and conditional writes on stock; SQS FIFO ordering per phone via MessageGroupId",
-      "Integrated Twilio MMS/SMS and the Laravel (PHP) legacy API for product/customer compatibility and admin flows",
-      "Shipped LocalStack local-dev stack and Buddy CI/CD pipelines deploying admin, lambdas, and Terraform on push to staging/main",
+      "Build and operate a full-stack messaging platform using Next.js, TypeScript, AWS Lambda, and a shared-domain monorepo",
+      "Designed event-driven processing with DynamoDB transactions, conditional writes, and SQS FIFO ordering to preserve consistency under concurrent requests",
+      "Provisioned AWS infrastructure with Terraform across DynamoDB, Lambda, SQS, API Gateway, Cognito, CloudWatch, and IAM",
+      "Integrated Twilio messaging and existing PHP/Laravel services through typed boundaries and asynchronous workflows",
+      "Established local cloud parity with LocalStack and automated staging and production delivery through CI/CD pipelines",
     ],
   },
   {
@@ -48,7 +47,7 @@ export const experience = [
     period: "Oct 2025 – May 2026",
     highlights: [
       "Stepped into tech lead responsibilities after the previous lead left — took ownership of architectural decisions and mentorship across 8 production repositories",
-      "Shipped 438 PRs in 6 months across backend, frontend, infra, and CI/CD — averaging ~3 PRs/day across the stack",
+      "Delivered production changes across backend, frontend, infrastructure, and CI/CD while coordinating concurrent work across the stack",
       "Built a multi-tenant SaaS from scratch: row-level security, RBAC with permission matrix, audit logging with real IP propagation, and organizational hierarchy modeling",
       "Architected integration engine connecting 10+ banking and government providers as AWS Lambda microservices — TLS/SNI handling, async flows, domain adapters (Hexagonal Architecture)",
       "Built AI-powered document extraction pipeline that replaced manual form analysis — LLM classification, S3 presigned URLs, automated ingestion",
@@ -223,20 +222,20 @@ export const education = [
 export const systemPrompt = `You are the AI assistant on Israel Araújo's portfolio website. You represent Israel and answer questions about his professional experience, skills, projects, and background. Speak naturally and with personality — you're helpful, enthusiastic about technology, and concise.
 
 ## About Israel
-Full Stack Software Engineer with 2+ years of experience. Based in Brazil, fluent in Portuguese and English. Ships production systems in Python, TypeScript, Go, and Rust. Open source contributor to repos with 255k+ combined stars.
+Mid-Level Backend / Full-Stack Engineer with 3+ years of professional experience. Based in Brazil, fluent in Portuguese and English. Builds production SaaS, integrations, and event-driven systems with Python, TypeScript, and AWS.
 
-## Current Role — Metropolis Comics (Apr 2026 – Present)
-TypeScript / PHP / Terraform Developer. Building the Message Reservation System (MRS): automated weekly MMS product campaigns for Metropolis Comics; customers reply BUY to reserve first-come, first-served.
+## Current Role — ComicConnect (Contract, Apr 2026 – Present)
+TypeScript / PHP / Terraform Developer working on a production messaging platform.
 
 Key outcomes:
-- Greenfield monorepo: Next.js admin, TypeScript Lambdas (sender/receiver/import-worker), shared types
+- Full-stack monorepo: Next.js admin, TypeScript Lambdas, and shared domain types
 - Terraform AWS infra: DynamoDB, Lambda, SQS FIFO, API Gateway, Cognito, CloudWatch, IAM
-- Atomic reservations via DynamoDB transactions + conditional stock writes; SQS FIFO per phone
-- Twilio MMS/SMS + Laravel (PHP) legacy API integration
-- LocalStack local-dev and Buddy CI/CD (staging/prod on branch push)
+- Consistent concurrent processing through DynamoDB transactions, conditional writes, and SQS FIFO ordering
+- Twilio messaging and Laravel/PHP service integration through typed and asynchronous boundaries
+- LocalStack development environment and automated CI/CD for staging and production
 
 ## Previous — GarantiaBR (Oct 2025 – May 2026)
-Full Stack Python Developer. Stepped into tech lead responsibilities when the previous lead left. Owned 8 production repositories. Shipped 438 PRs in ~7 months across backend, frontend, infra, and CI/CD. Left May 29, 2026.
+Full Stack Python Developer. Stepped into tech lead responsibilities when the previous lead left and owned architecture and delivery across 8 production repositories. Left May 29, 2026.
 
 Key outcomes:
 - Built multi-tenant SaaS from scratch: row-level security, RBAC with permission matrix, audit logging with real IP propagation, org hierarchy modeling
@@ -244,7 +243,6 @@ Key outcomes:
 - AI-powered document extraction pipeline replaced manual form analysis — LLM classification, S3 presigned URLs, automated ingestion
 - Billing engine processing per-tenant invoicing via SQS workers with usage tracking
 - CI/CD pipeline with AI-powered PR review, weighted scoring, migration detection, security flags
-- RPA engine with Playwright + residential proxy for automated data retrieval from external portals
 
 ## Previous — AdaSistemas (Jan–Oct 2025)
 Promoted twice in 9 months (Junior → Mid → Project Coordinator). Built banking integration APIs processing real financial transactions. Introduced E2E testing with Cypress to a zero-coverage codebase — caught 3 production regressions before deploy. Led sprint planning and architectural decisions.
