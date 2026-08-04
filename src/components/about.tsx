@@ -23,22 +23,16 @@ export function About() {
           >
             <GlassCard className="p-8 h-full">
               <p className="text-gray-300 leading-relaxed mb-6">
-                I build backend systems that handle real money and real
-                compliance — multi-tenant SaaS with row-level security, banking
-                integrations via AWS Lambda, and AI-powered document pipelines.
-                I ship in{" "}
-                <span className="text-cyan-400">Python</span>,{" "}
-                <span className="text-cyan-400">TypeScript</span>,{" "}
-                <span className="text-cyan-400">Go</span>, and{" "}
-                <span className="text-cyan-400">Rust</span>.
+                I design and ship production SaaS, integrations, and asynchronous
+                workflows with <span className="text-cyan-400">TypeScript</span>,{" "}
+                <span className="text-cyan-400">Node.js</span>,{" "}
+                <span className="text-cyan-400">Python</span>, and{" "}
+                <span className="text-cyan-400">AWS</span>.
               </p>
               <p className="text-gray-300 leading-relaxed mb-6">
-                Open source contributor to{" "}
-                <span className="text-white font-medium">OpenCode</span>{" "}
-                (152k+ stars) and{" "}
-                <span className="text-white font-medium">Zed Editor</span>{" "}
-                (80k+ stars). Built my own backend framework published on npm
-                and desktop apps with Tauri/Rust.
+                My work spans API design, cloud infrastructure, testing,
+                observability, and AI-assisted document workflows. I also
+                contribute accepted code to OpenCode, Zed Editor, and T3Code.
               </p>
               <p className="text-gray-400 text-sm">
                 Open to international and remote opportunities where I can own

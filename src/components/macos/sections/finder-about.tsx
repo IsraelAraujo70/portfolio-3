@@ -12,9 +12,9 @@ export function FinderAbout() {
         viewport={{ once: true, margin: "-50px" }}
       >
         <h2 className="text-2xl font-bold text-white mb-1">
-          About<span className="text-cyan-400">.</span>
+          How I work<span className="text-cyan-400">.</span>
         </h2>
-        <p className="text-gray-500 text-sm mb-6">A quick overview of who I am</p>
+        <p className="text-gray-500 text-sm mb-6">Product responsibility backed by production evidence</p>
       </motion.div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -22,30 +22,32 @@ export function FinderAbout() {
           initial={{ opacity: 0, x: -15 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-50px" }}
-          style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-6"
+          style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}
+          className="liquid-glass-light rounded-xl p-6"
         >
-          <p className="text-gray-300 text-sm leading-relaxed mb-4">
-            I build backend systems that handle real money and real
-            compliance — multi-tenant SaaS with row-level security, banking
-            integrations via AWS Lambda, and AI-powered document pipelines.
-            I ship in{" "}
-            <span className="text-cyan-400">Python</span>,{" "}
-            <span className="text-cyan-400">TypeScript</span>,{" "}
-            <span className="text-cyan-400">Go</span>, and{" "}
-            <span className="text-cyan-400">Rust</span>.
+          <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-400">
+            Operating profile
           </p>
           <p className="text-gray-300 text-sm leading-relaxed mb-4">
-            Open source contributor to{" "}
-            <span className="text-white font-medium">OpenCode</span>{" "}
-            (152k+ stars) and{" "}
-            <span className="text-white font-medium">Zed Editor</span>{" "}
-            (80k+ stars). Built my own backend framework published on npm
-            and desktop apps with Tauri/Rust.
+            I design and ship production SaaS, integrations, and asynchronous
+            workflows with <span className="text-cyan-400">TypeScript</span>,{" "}
+            <span className="text-cyan-400">Node.js</span>,{" "}
+            <span className="text-cyan-400">Python</span>, and{" "}
+            <span className="text-cyan-400">AWS</span>. My work spans API design,
+            data consistency, cloud infrastructure, testing, observability, and delivery.
           </p>
-          <p className="text-gray-500 text-xs">
-            Open to international and remote opportunities where I can own
-            systems end-to-end and ship fast.
+          <p className="text-gray-300 text-sm leading-relaxed mb-4">
+            I have built multi-tenant platforms, connected banking and government
+            providers, and delivered LLM-assisted document workflows with explicit
+            validation and human-review fallbacks. I also contribute accepted code
+            to developer tools including OpenCode, Zed, and T3Code.
           </p>
+          <div className="border-l-2 border-cyan-400/50 pl-3">
+            <p className="text-xs leading-relaxed text-gray-400">
+              Best fit: remote product teams where I can own a system end to end,
+              make architecture trade-offs explicit, and keep delivery close to users.
+            </p>
+          </div>
         </motion.div>
 
         <motion.div
@@ -62,16 +64,22 @@ export function FinderAbout() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-4 text-center"
+                style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}
+                className="liquid-glass-light rounded-xl p-4 text-left"
               >
-                <p className="text-xl font-bold text-cyan-400">{stat.value}</p>
-                <p className="text-[11px] text-gray-500 mt-1">{stat.label}</p>
+                <p className="font-mono text-[10px] uppercase tracking-wide text-gray-500">
+                  {stat.label}
+                </p>
+                <p className="mt-2 text-xl font-bold text-cyan-400">{stat.value}</p>
               </motion.div>
             ))}
           </div>
 
-          <div style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-5 flex-1">
-            <p className="text-xs font-medium text-gray-400 mb-2">Tech Stack</p>
+          <div
+            style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}
+            className="liquid-glass-light rounded-xl p-5 flex-1"
+          >
+            <p className="text-xs font-medium text-gray-400 mb-2">Production toolkit</p>
             <div className="flex flex-wrap gap-1.5">
               {skillCategories
                 .flatMap((c) => c.items)

@@ -25,7 +25,7 @@ const siteUrl = "https://israeldeveloper.com.br";
 const siteName = "Israel Araújo Portfolio";
 const title = "Israel Araújo | Full Stack Engineer";
 const description =
-  "Full Stack Software Engineer in Brazil building production systems with Python, TypeScript, Go, Rust, AI, microservices, and cloud architecture.";
+  "Mid-level Full Stack Engineer with 3+ years building production SaaS, integrations, event-driven systems, and AI-assisted workflows with TypeScript, Node.js, Python, and AWS.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -46,16 +46,17 @@ export const metadata: Metadata = {
     "full stack developer",
     "full stack engineer Brazil",
     "backend engineer",
-    "python",
     "typescript",
+    "node.js",
+    "python",
+    "AWS",
+    "serverless",
+    "event-driven systems",
     "next.js",
     "react",
-    "go",
-    "rust",
-    "AI",
-    "LLM",
-    "cloud architecture",
-    "microservices",
+    "AI software engineer",
+    "LLM workflows",
+    "Terraform",
     "open source",
     "remote software engineer",
   ],
@@ -122,17 +123,13 @@ export default function RootLayout({
         url: siteUrl,
         image: `${siteUrl}/profile-picture.jpeg`,
         email: `mailto:${personalInfo.email}`,
-        telephone: "+5535997421900",
+        description,
         address: {
           "@type": "PostalAddress",
           addressCountry: "BR",
         },
-        sameAs: [
-          personalInfo.github,
-          personalInfo.linkedin,
-          personalInfo.x,
-          personalInfo.whatsapp,
-        ],
+        sameAs: [personalInfo.github, personalInfo.linkedin],
+        knowsLanguage: ["Portuguese", "English"],
         knowsAbout: skillCategories.flatMap((category) => category.items),
         hasPart: projects.map((project) => ({
           "@type": "CreativeWork",

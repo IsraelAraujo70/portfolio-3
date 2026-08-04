@@ -33,13 +33,13 @@ const ABOUT_TEXT = `
 ${personalInfo.fullName}
 ${personalInfo.title} | ${personalInfo.location}
 
-Full Stack Engineer with 2+ years building production systems
-in Python, TypeScript, Go & Rust.
+Mid-level Full Stack Engineer with 3+ years of experience.
+Core stack: TypeScript, Node.js, Python, and AWS.
 
-Open source contributor to Zed Editor (23k+ stars).
-1,500+ commits in the last 7 months. 100 public repos.
+Builds production SaaS, integrations, event-driven systems,
+and AI-assisted workflows from APIs to cloud delivery.
 
-Currently open to international/remote opportunities.
+Open to international remote opportunities.
 `.trim();
 
 function formatSkills(): string {

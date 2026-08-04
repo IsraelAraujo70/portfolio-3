@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, GitPullRequest, ExternalLink } from "lucide-react";
+import { GitPullRequest, ExternalLink } from "lucide-react";
 import { openSourceContributions } from "@/lib/resume-data";
 
 export function FinderOpenSource() {
@@ -15,7 +15,7 @@ export function FinderOpenSource() {
         <h2 className="text-2xl font-bold text-white mb-1">
           Open Source<span className="text-cyan-400">.</span>
         </h2>
-        <p className="text-gray-500 text-sm mb-6">Contributing to tools I use every day</p>
+        <p className="text-gray-500 text-sm mb-6">Accepted contributions with direct evidence</p>
       </motion.div>
 
       <div className="space-y-4">
@@ -26,26 +26,23 @@ export function FinderOpenSource() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ delay: i * 0.05 }}
-            style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-5"
+            style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}
+            className="liquid-glass-light rounded-xl p-5"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
                 <h3 className="text-base font-bold text-white">{contrib.project}</h3>
-                {contrib.stars && (
-                  <span className="flex items-center gap-1 text-xs text-yellow-400/80">
-                    <Star size={12} fill="currentColor" />
-                    {contrib.stars}
-                  </span>
-                )}
+                <p className="mt-0.5 text-xs text-gray-500">{contrib.description}</p>
               </div>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.08] text-gray-400 w-fit">
-                {contrib.language}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.08] text-gray-400">
+                  {contrib.language}
+                </span>
+                <span className="font-mono text-[10px] text-cyan-400/70">
+                  {contrib.prs.length} linked PR{contrib.prs.length === 1 ? "" : "s"}
+                </span>
+              </div>
             </div>
-
-            {contrib.description && (
-              <p className="text-gray-500 text-xs mb-3">{contrib.description}</p>
-            )}
 
             <div className="space-y-2">
               {contrib.prs.map((pr) => (
@@ -56,7 +53,7 @@ export function FinderOpenSource() {
                       href={pr.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-gray-300 hover:text-cyan-400 transition-colors flex items-center gap-1.5"
+                      className="text-xs text-gray-300 hover:text-cyan-400 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 rounded-sm"
                     >
                       {pr.title}
                       <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -73,7 +70,7 @@ export function FinderOpenSource() {
                 href={contrib.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 mt-4 text-xs text-gray-500 hover:text-cyan-400 transition-colors"
+                className="inline-flex items-center gap-1.5 mt-4 text-xs text-gray-500 hover:text-cyan-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 rounded-sm"
               >
                 View repository
                 <ExternalLink size={11} />

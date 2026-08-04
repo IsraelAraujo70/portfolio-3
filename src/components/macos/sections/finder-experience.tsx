@@ -14,7 +14,7 @@ export function FinderExperience() {
         <h2 className="text-2xl font-bold text-white mb-1">
           Experience<span className="text-cyan-400">.</span>
         </h2>
-        <p className="text-gray-500 text-sm mb-6">Where I&apos;ve been building things</p>
+        <p className="text-gray-500 text-sm mb-6">Production ownership, progression, and impact</p>
       </motion.div>
 
       <div className="relative">
@@ -32,7 +32,10 @@ export function FinderExperience() {
             >
               <div className="absolute left-3 top-6 w-2 h-2 rounded-full bg-cyan-400 -translate-x-[3.5px]" />
 
-              <div style={{backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)"}} className="liquid-glass-light rounded-xl p-5">
+              <div
+                style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}
+                className="liquid-glass-light rounded-xl p-5"
+              >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
                   <div>
                     <h3 className="text-base font-bold text-white">{job.company}</h3>
@@ -48,6 +51,9 @@ export function FinderExperience() {
                     </li>
                   ))}
                 </ul>
+                <p className="mt-4 border-t border-white/[0.06] pt-3 font-mono text-[10px] uppercase tracking-wide text-gray-500">
+                  {job.stack}
+                </p>
               </div>
             </motion.div>
           ))}
