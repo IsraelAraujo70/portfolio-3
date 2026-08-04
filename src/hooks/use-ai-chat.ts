@@ -1,48 +1,95 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { useState, useRef, useEffect } from "react";
-
-export const chatSuggestions = [
-  "What's your experience with Rust?",
-  "Tell me about your AI projects",
-  "What open source work have you done?",
-  "Are you available for remote work?",
-];
-
-export function getMessageText(
-  parts: Array<{ type: string; text?: string }>,
-): string {
-  return parts
-    .filter((p) => p.type === "text")
-    .map((p) => p.text ?? "")
-    .join("");
-}
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { UIMessage } from "ai";
+import {
+  CHAT_SESSION_STORAGE_KEY,
+  parseStoredChatMessages,
+} from "@/lib/chat-ux";
 
 export function useAIChat() {
-  const { messages, sendMessage, status, error } = useChat();
+  const suppressNextPersistRef = useRef(false);
+  const persistMessages = useCallback((messages: UIMessage[]) => {
+    window.sessionStorage.setItem(CHAT_SESSION_STORAGE_KEY, JSON.stringify(messages));
+  }, []);
+
+  const {
+    messages,
+    sendMessage,
+    setMessages,
+    status,
+    error,
+    stop,
+    regenerate,
+    clearError,
+  } = useChat({
+    experimental_throttle: 40,
+    onFinish: ({ messages: completedMessages }) => {
+      if (suppressNextPersistRef.current) {
+        suppressNextPersistRef.current = false;
+        return;
+      }
+      persistMessages(completedMessages);
+    },
+  });
   const [input, setInput] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const hydratedRef = useRef(false);
 
   const isLoading = status === "submitted" || status === "streaming";
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
+    if (hydratedRef.current) return;
+    hydratedRef.current = true;
+    const stored = parseStoredChatMessages(
+      window.sessionStorage.getItem(CHAT_SESSION_STORAGE_KEY),
+    );
+    if (stored.length > 0) setMessages(stored);
+  }, [setMessages]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-    sendMessage({ text: input });
+  const handleSubmit = () => {
+    const next = input.trim();
+    if (!next || isLoading) return false;
+    setNotice(null);
+    clearError();
+    void sendMessage({ text: next });
     setInput("");
+    return true;
   };
 
   const handleSuggestion = (text: string) => {
-    if (isLoading) return;
-    sendMessage({ text });
+    setInput(text);
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(text.length, text.length);
+    });
+  };
+
+  const handleStop = () => {
+    if (!isLoading) return;
+    stop();
+    setNotice("Response stopped. You can continue with another question.");
+  };
+
+  const handleRetry = () => {
+    setNotice(null);
+    clearError();
+    void regenerate();
+  };
+
+  const handleNewConversation = () => {
+    if (isLoading) {
+      suppressNextPersistRef.current = true;
+      stop();
+    }
+    setMessages([]);
+    setInput("");
+    setNotice(null);
+    clearError();
+    window.sessionStorage.removeItem(CHAT_SESSION_STORAGE_KEY);
+    requestAnimationFrame(() => inputRef.current?.focus());
   };
 
   return {
@@ -50,10 +97,14 @@ export function useAIChat() {
     input,
     setInput,
     isLoading,
+    status,
     error,
-    scrollRef,
+    notice,
     inputRef,
     handleSubmit,
     handleSuggestion,
+    handleStop,
+    handleRetry,
+    handleNewConversation,
   };
 }

@@ -2,7 +2,7 @@
 
 import { type CSSProperties } from "react";
 import { WindowChrome } from "./window-chrome";
-import { ChatContent } from "./chat-content";
+import { ChatContent } from "@/components/chat/chat-content";
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export function ChatWindow({
 }: ChatWindowProps) {
   return (
     <WindowChrome
-      title="Messages — AI Assistant"
+      title="Messages"
       isOpen={isOpen}
       onClose={onClose}
       onMinimize={onMinimize}
