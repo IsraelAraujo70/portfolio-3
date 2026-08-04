@@ -51,13 +51,13 @@ function formatAbout(): string {
     `\x1b[1m${personalInfo.fullName}\x1b[0m`,
     `\x1b[38;5;245m${personalInfo.title} | ${personalInfo.location}\x1b[0m`,
     "",
-    "Mid-Level Backend / Full-Stack Engineer with 3+ years",
-    "building production systems in Python, TypeScript & AWS.",
+    "Mid-level Full Stack Engineer with 3+ years of experience.",
+    "TypeScript, Node.js, Python, and AWS are the core stack.",
     "",
-    "Experienced with SaaS, provider integrations, event-driven",
-    "architecture, and infrastructure as code.",
+    "Builds production SaaS, integrations, event-driven systems,",
+    "and AI-assisted workflows from APIs to cloud delivery.",
     "",
-    "Currently open to international/remote opportunities.",
+    "Open to international remote opportunities.",
   ].join("\r\n");
 }
 

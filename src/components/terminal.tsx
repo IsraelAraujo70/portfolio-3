@@ -33,13 +33,13 @@ const ABOUT_TEXT = `
 ${personalInfo.fullName}
 ${personalInfo.title} | ${personalInfo.location}
 
-Mid-Level Backend / Full-Stack Engineer with 3+ years
-building production systems in Python, TypeScript & AWS.
+Mid-level Full Stack Engineer with 3+ years of experience.
+Core stack: TypeScript, Node.js, Python, and AWS.
 
-Experienced with SaaS, provider integrations, event-driven
-architecture, and infrastructure as code.
+Builds production SaaS, integrations, event-driven systems,
+and AI-assisted workflows from APIs to cloud delivery.
 
-Currently open to international/remote opportunities.
+Open to international remote opportunities.
 `.trim();
 
 function formatSkills(): string {

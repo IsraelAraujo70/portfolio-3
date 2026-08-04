@@ -14,17 +14,18 @@ const publicCopy = (
   )
 ).join("\n");
 
-test("presents the current ComicConnect role as a contract", () => {
+test("presents the current ComicConnect role and production scope", () => {
   assert.match(source, /company: "ComicConnect"/);
-  assert.match(source, /TypeScript \/ PHP \/ Terraform Developer \(Contract\)/);
-  assert.match(source, /Current Role — ComicConnect \(Contract, Apr 2026 – Present\)/);
+  assert.match(source, /role: "Full Stack Software Engineer"/);
+  assert.match(source, /Current Role - ComicConnect \(Apr 2026 - Present\)/);
+  assert.match(source, /AWS infrastructure provisioned with Terraform/);
 });
 
 test("positions Israel for international mid-level roles", () => {
-  assert.match(source, /Mid-Level Backend \/ Full-Stack Engineer/);
-  assert.match(source, /3\+ years of professional experience/);
-  assert.match(source, /Python, TypeScript, and AWS/);
-  assert.match(publicCopy, /Israel Araújo \| Mid-Level Backend \/ Full-Stack Engineer/);
+  assert.match(source, /Mid-level Full Stack Engineer/);
+  assert.match(source, /3\+ years of professional software development experience/);
+  assert.match(source, /TypeScript, Node\.js, Python, and AWS/);
+  assert.match(publicCopy, /Israel Araújo \| Full Stack Engineer/);
 });
 
 test("does not expose outdated or business-specific role wording", () => {

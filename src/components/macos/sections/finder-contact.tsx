@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail } from "lucide-react";
-import { GitHubIcon, LinkedInIcon, XIcon } from "@/components/ui/icons";
+import { Mail, MapPin } from "lucide-react";
+import { GitHubIcon, LinkedInIcon } from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
 
 const contactLinks = [
@@ -18,13 +18,6 @@ const contactLinks = [
     label: "LinkedIn",
     value: "araisr",
     href: personalInfo.linkedin,
-    isSvg: true,
-  },
-  {
-    icon: XIcon,
-    label: "X",
-    value: "calop1337",
-    href: personalInfo.x,
     isSvg: true,
   },
   {
@@ -46,10 +39,10 @@ export function FinderContact() {
         className="text-center"
       >
         <h2 className="text-2xl font-bold text-white mb-2">
-          Let&apos;s work together<span className="text-cyan-400">.</span>
+          Build the next system together<span className="text-cyan-400">.</span>
         </h2>
         <p className="text-gray-400 text-sm mb-8">
-          Open to international and remote opportunities.
+          Open to mid-level full-stack and backend-leaning remote opportunities.
         </p>
       </motion.div>
 
@@ -60,21 +53,30 @@ export function FinderContact() {
         transition={{ delay: 0.05 }}
         className="liquid-glass-light rounded-xl p-6"
       >
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+        <div className="mb-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+          <MapPin size={14} className="text-cyan-400/70" />
+          Brazil · Available for international remote teams
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
           {contactLinks.map(({ icon: Icon, label, value, href, isSvg }) => (
             <a
               key={label}
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2.5 text-gray-400 hover:text-cyan-400 transition-colors group"
+              className="group flex items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.025] p-3 text-gray-400 transition-colors hover:border-cyan-400/20 hover:text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
             >
               {isSvg ? (
                 <Icon width={18} height={18} className="group-hover:scale-110 transition-transform" />
               ) : (
                 <Icon size={18} className="group-hover:scale-110 transition-transform" />
               )}
-              <span className="text-sm">{value}</span>
+              <span className="min-w-0">
+                <span className="block font-mono text-[9px] uppercase tracking-wide text-gray-600">
+                  {label}
+                </span>
+                <span className="block truncate text-xs">{value}</span>
+              </span>
             </a>
           ))}
         </div>

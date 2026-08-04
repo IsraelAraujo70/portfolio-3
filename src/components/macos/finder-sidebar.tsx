@@ -13,16 +13,16 @@ const navItems = [
   { id: "hero", label: "Home", icon: Home },
   { id: "about", label: "About", icon: User },
   { id: "experience", label: "Experience", icon: Briefcase },
-  { id: "projects", label: "Projects", icon: FolderOpen },
+  { id: "projects", label: "Selected Work", icon: FolderOpen },
   { id: "opensource", label: "Open Source", icon: GitBranch },
   { id: "contact", label: "Contact", icon: Mail },
 ];
 
 const techTags = [
-  { label: "Python", color: "#3776AB" },
   { label: "TypeScript", color: "#3178C6" },
-  { label: "Rust", color: "#DEA584" },
-  { label: "Go", color: "#00ADD8" },
+  { label: "Node.js", color: "#5FA04E" },
+  { label: "Python", color: "#3776AB" },
+  { label: "AWS", color: "#FF9900" },
 ];
 
 interface FinderSidebarProps {
@@ -43,8 +43,9 @@ export function FinderSidebar({ activeSection, onNavigate }: FinderSidebarProps)
           return (
             <button
               key={id}
+              type="button"
               onClick={() => onNavigate(id)}
-              className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[13px] transition-all ${
+              className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[13px] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
                 active
                   ? "bg-white/[0.12] text-white"
                   : "text-white/50 hover:text-white/70 hover:bg-white/[0.05]"

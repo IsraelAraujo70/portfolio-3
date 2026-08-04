@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, type CSSProperties } from "react";
 import Image from "next/image";
+import { MotionConfig } from "framer-motion";
 import { WindowChrome } from "./window-chrome";
 import { FinderSidebar } from "./finder-sidebar";
 import { FinderHero } from "./sections/finder-hero";
@@ -72,45 +73,47 @@ export function FinderWindow({
   }, []);
 
   return (
-    <WindowChrome
-      title="Israel Araujo — Portfolio"
-      icon={
-        <Image src="/dev-icon.svg" alt="" width={16} height={16} />
-      }
-      onClose={onClose}
-      onMinimize={onMinimize}
-      onMaximize={onMaximize}
-      onFocus={onFocus}
-      dragHandleProps={dragHandleProps}
-      style={style}
-      className="flex flex-col w-full h-full"
-      sidebar={
-        <FinderSidebar
-          activeSection={activeSection}
-          onNavigate={handleNavigate}
-        />
-      }
-    >
-      <div ref={contentRef} className="overflow-y-auto h-full scroll-smooth">
-        <div id="finder-hero">
-          <FinderHero onOpenChat={onOpenChat} />
+    <MotionConfig reducedMotion="user">
+      <WindowChrome
+        title="Israel Araujo — Portfolio"
+        icon={
+          <Image src="/dev-icon.svg" alt="" width={16} height={16} />
+        }
+        onClose={onClose}
+        onMinimize={onMinimize}
+        onMaximize={onMaximize}
+        onFocus={onFocus}
+        dragHandleProps={dragHandleProps}
+        style={style}
+        className="flex flex-col w-full h-full"
+        sidebar={
+          <FinderSidebar
+            activeSection={activeSection}
+            onNavigate={handleNavigate}
+          />
+        }
+      >
+        <div ref={contentRef} className="overflow-y-auto h-full scroll-smooth">
+          <div id="finder-hero">
+            <FinderHero onOpenChat={onOpenChat} />
+          </div>
+          <div id="finder-about">
+            <FinderAbout />
+          </div>
+          <div id="finder-experience">
+            <FinderExperience />
+          </div>
+          <div id="finder-projects">
+            <FinderProjects />
+          </div>
+          <div id="finder-opensource">
+            <FinderOpenSource />
+          </div>
+          <div id="finder-contact">
+            <FinderContact />
+          </div>
         </div>
-        <div id="finder-about">
-          <FinderAbout />
-        </div>
-        <div id="finder-experience">
-          <FinderExperience />
-        </div>
-        <div id="finder-projects">
-          <FinderProjects />
-        </div>
-        <div id="finder-opensource">
-          <FinderOpenSource />
-        </div>
-        <div id="finder-contact">
-          <FinderContact />
-        </div>
-      </div>
-    </WindowChrome>
+      </WindowChrome>
+    </MotionConfig>
   );
 }
