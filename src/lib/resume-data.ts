@@ -14,10 +14,26 @@ export const personalInfo = {
 };
 
 export const stats = [
-  { label: "Professional experience", value: "3+ yrs" },
-  { label: "Provider integrations", value: "10+" },
-  { label: "Junior to mid-level", value: "4 mo" },
-  { label: "Working languages", value: "PT · EN" },
+  {
+    label: "Experience",
+    value: "3+ years",
+    detail: "Professional software development",
+  },
+  {
+    label: "Integrations",
+    value: "10+ providers",
+    detail: "Banking, government, and accounting",
+  },
+  {
+    label: "Career progression",
+    value: "Promoted to mid-level",
+    detail: "Within 4 months at AdaSistemas",
+  },
+  {
+    label: "Languages",
+    value: "Portuguese + English",
+    detail: "Native · professional working proficiency",
+  },
 ];
 
 export const skillCategories = [

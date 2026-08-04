@@ -65,12 +65,17 @@ export function FinderAbout() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
                 style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}
-                className="liquid-glass-light rounded-xl p-4 text-left"
+                className="liquid-glass-light rounded-xl border-t-cyan-400/20 p-4 text-left transition-colors hover:border-cyan-400/20 hover:bg-white/[0.065]"
               >
-                <p className="font-mono text-[10px] uppercase tracking-wide text-gray-500">
+                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-cyan-400/65">
                   {stat.label}
                 </p>
-                <p className="mt-2 text-xl font-bold text-cyan-400">{stat.value}</p>
+                <p className="mt-2 text-base font-semibold leading-tight text-white">
+                  {stat.value}
+                </p>
+                <p className="mt-1.5 text-[10px] leading-4 text-gray-500">
+                  {stat.detail}
+                </p>
               </motion.div>
             ))}
           </div>

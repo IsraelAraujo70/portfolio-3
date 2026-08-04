@@ -65,15 +65,24 @@ export function FinderHero({ onOpenChat }: { onOpenChat: () => void }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.33 }}
-            className="mb-6 flex flex-wrap justify-center gap-x-5 gap-y-2 md:justify-start"
+            className="mb-6 grid w-full max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.08] text-left md:grid-cols-3"
           >
-            {stats.slice(0, 3).map((stat) => (
-              <div key={stat.label} className="flex items-baseline gap-1.5">
-                <dt className="sr-only">{stat.label}</dt>
-                <dd className="text-sm font-semibold text-white">{stat.value}</dd>
-                <span className="text-[10px] uppercase tracking-wide text-gray-500">
+            {stats.slice(0, 3).map((stat, index) => (
+              <div
+                key={stat.label}
+                className={`bg-[#0c1018]/90 p-3.5 ${
+                  index === 2 ? "col-span-2 md:col-span-1" : ""
+                }`}
+              >
+                <dt className="font-mono text-[9px] uppercase tracking-[0.18em] text-cyan-400/70">
                   {stat.label}
-                </span>
+                </dt>
+                <dd className="mt-1.5 text-sm font-semibold leading-tight text-white">
+                  {stat.value}
+                </dd>
+                <p className="mt-1 text-[10px] leading-4 text-gray-500">
+                  {stat.detail}
+                </p>
               </div>
             ))}
           </motion.dl>
