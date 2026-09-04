@@ -11,10 +11,13 @@ export interface AppIconConfig {
 
 interface AppIconProps extends AppIconConfig {
   morphLayoutId?: string;
+  accessibleLabel?: string;
 }
 
+/** Renders a launch target with an accessible name even when its caption is hidden. */
 export function AppIcon({
   label,
+  accessibleLabel,
   gradient,
   icon,
   onTap,
@@ -46,6 +49,7 @@ export function AppIcon({
     return (
       <a
         href={href}
+        aria-label={accessibleLabel ?? label}
         target={href.startsWith("mailto:") ? undefined : "_blank"}
         rel="noopener noreferrer"
         className="flex flex-col items-center touch-manipulation w-full active:scale-[0.92] transition-transform"
@@ -59,6 +63,7 @@ export function AppIcon({
   return (
     <button
       type="button"
+      aria-label={accessibleLabel ?? label}
       onClick={onTap}
       className="flex flex-col items-center touch-manipulation w-full active:scale-[0.92] transition-transform"
     >

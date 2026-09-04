@@ -14,7 +14,8 @@ export function HomeIndicator({ appOpen, onClose }: HomeIndicatorProps) {
     <div className="fixed bottom-0 left-0 right-0 z-[65] flex justify-center pointer-events-none">
       <button
         type="button"
-        aria-label={appOpen ? "Close app" : "Home indicator"}
+        aria-label="Return to home screen"
+        disabled={!appOpen}
         onPointerDown={(event) => {
           pointerStartY.current = event.clientY;
           event.currentTarget.setPointerCapture(event.pointerId);

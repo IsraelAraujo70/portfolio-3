@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 import { GitHubIcon } from "@/components/ui/icons";
 import { GlassCard } from "@/components/ui/glass-card";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -33,12 +34,12 @@ export function Projects() {
                     <p className="text-cyan-400 text-sm">{project.tagline}</p>
                   </div>
                   <a
-                    href={project.github}
+                    href={project.website ?? project.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-500 hover:text-white transition-colors shrink-0 ml-4"
                   >
-                    <GitHubIcon width={20} height={20} />
+                    {project.github ? <GitHubIcon width={20} height={20} /> : <ExternalLink size={20} />}
                   </a>
                 </div>
 

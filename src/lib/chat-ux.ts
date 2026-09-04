@@ -10,8 +10,8 @@ export const chatSuggestions = [
   },
   {
     id: "projects",
-    label: "Architecture projects",
-    prompt: "Walk me through Israel's strongest architecture projects and decisions.",
+    label: "SocialTerminal",
+    prompt: "Tell me about SocialTerminal and the decisions behind its SSH and web clients.",
   },
   {
     id: "opensource",

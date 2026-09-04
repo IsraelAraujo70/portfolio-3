@@ -74,6 +74,6 @@ test("wires accessible send, stop, retry, and latest-message controls", async ()
   assert.match(content, /aria-label="Scroll to latest message"/);
   assert.match(content, /\bRetry\b/);
   assert.match(composer, /aria-label=\{busy \? "Stop response" : "Send message"\}/);
-  assert.match(message, /ReactMarkdown/);
+  assert.match(message, /ChatMarkdown/);
   assert.doesNotMatch(message, /rehypeRaw/);
 });

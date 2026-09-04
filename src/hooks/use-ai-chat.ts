@@ -8,10 +8,14 @@ import {
   parseStoredChatMessages,
 } from "@/lib/chat-ux";
 
+/** Maintains a tab-scoped conversation with streaming, cancellation, and retry. */
 export function useAIChat() {
   const suppressNextPersistRef = useRef(false);
   const persistMessages = useCallback((messages: UIMessage[]) => {
-    window.sessionStorage.setItem(CHAT_SESSION_STORAGE_KEY, JSON.stringify(messages));
+    window.sessionStorage.setItem(
+      CHAT_SESSION_STORAGE_KEY,
+      JSON.stringify(messages),
+    );
   }, []);
 
   const {

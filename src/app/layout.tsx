@@ -119,7 +119,7 @@ export default function RootLayout({
           "@type": "CreativeWork",
           name: project.name,
           description: project.description,
-          url: project.github,
+          url: project.website ?? project.github,
           keywords: project.tech.join(", "),
         })),
       },

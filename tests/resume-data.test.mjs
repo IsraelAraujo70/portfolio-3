@@ -1,8 +1,17 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import {
+  experience,
+  personalInfo,
+  stats,
+  systemPrompt,
+} from "../src/lib/resume-data.ts";
 
-const source = await readFile(new URL("../src/lib/resume-data.ts", import.meta.url), "utf8");
+const source = await readFile(
+  new URL("../src/lib/resume-data.ts", import.meta.url),
+  "utf8",
+);
 const publicCopy = (
   await Promise.all(
     [
@@ -16,16 +25,27 @@ const publicCopy = (
 
 test("presents the current ComicConnect role and production scope", () => {
   assert.match(source, /company: "ComicConnect"/);
-  assert.match(source, /role: "Full Stack Software Engineer"/);
-  assert.match(source, /Current Role - ComicConnect \(Apr 2026 - Present\)/);
-  assert.match(source, /AWS infrastructure provisioned with Terraform/);
+  const current = experience.find((role) => role.company === "ComicConnect");
+  assert.match(current.role, /Full Stack Software Engineer.*Contract/);
+  assert.equal(current.period, "Apr 2026 – Present");
+  assert.ok(
+    current.highlights.some((highlight) => /Terraform/.test(highlight)),
+  );
+  assert.ok(
+    systemPrompt.includes(
+      JSON.stringify(current, null, 2).split("\n")[1].trim(),
+    ),
+  );
 });
 
 test("positions Israel for international mid-level roles", () => {
-  assert.match(source, /Mid-level Full Stack Engineer/);
-  assert.match(source, /3\+ years of professional software development experience/);
-  assert.match(source, /TypeScript, Node\.js, Python, and AWS/);
-  assert.match(publicCopy, /Israel Araújo \| Full Stack Engineer/);
+  assert.equal(personalInfo.level, "Mid-level");
+  assert.equal(
+    stats.find((stat) => stat.label === "Experience").value,
+    "3+ years",
+  );
+  assert.match(personalInfo.subtitle, /TypeScript.*Node.js.*Python.*AWS/);
+  assert.match(personalInfo.availability, /international remote/);
 });
 
 test("does not expose outdated or business-specific role wording", () => {
@@ -36,6 +56,9 @@ test("does not expose outdated or business-specific role wording", () => {
     "2+ years of experience",
     "438 PRs",
   ]) {
-    assert.doesNotMatch(publicCopy, new RegExp(banned.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));
+    assert.doesNotMatch(
+      publicCopy,
+      new RegExp(banned.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
+    );
   }
 });

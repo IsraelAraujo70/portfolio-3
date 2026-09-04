@@ -30,6 +30,7 @@ interface DockProps {
   openWindows: string[];
 }
 
+/** Glass launcher with CSS hover feedback and accessible application labels. */
 export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNotes, openWindows }: DockProps) {
   const items: DockItemConfig[] = [
     {
@@ -105,20 +106,12 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
   };
 
   return (
-    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[60]">
+    <nav aria-label="Dock" className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[90]">
       <motion.div
         initial={{ y: 48, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.24, ease: "easeOut" }}
-        style={{
-          backdropFilter: "blur(20px) saturate(130%)",
-          WebkitBackdropFilter: "blur(20px) saturate(130%)",
-          background: "rgba(20, 20, 24, 0.72)",
-          border: "1px solid rgba(255, 255, 255, 0.18)",
-          boxShadow:
-            "0 8px 32px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.2)",
-        }}
-        className="flex items-end gap-1.5 px-2.5 pt-2 pb-1.5 rounded-2xl"
+        className="mac-dock"
       >
         {items.map((item, index) => (
           <DockItem
@@ -129,7 +122,7 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
           />
         ))}
       </motion.div>
-    </div>
+    </nav>
   );
 }
 
@@ -162,10 +155,10 @@ function DockItem({
         <Wrapper
           {...(wrapperProps as Record<string, unknown>)}
           aria-label={item.label}
-          className="block origin-bottom transition-transform duration-150 ease-out hover:scale-125 hover:-translate-y-1 focus-visible:scale-110 focus-visible:-translate-y-0.5 focus-visible:outline-none"
+          className="block origin-bottom transition-transform duration-150 ease-out hover:scale-125 hover:-translate-y-1 focus-visible:scale-110 focus-visible:-translate-y-0.5 focus-visible:outline-none motion-reduce:transform-none"
         >
           <div
-            className={`w-12 h-12 rounded-[13px] bg-gradient-to-br ${item.gradient} flex items-center justify-center cursor-pointer`}
+            className={`mac-app-icon w-12 h-12 rounded-[13px] bg-gradient-to-br ${item.gradient} flex items-center justify-center cursor-pointer`}
             style={{
               boxShadow: "0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15)",
             }}
