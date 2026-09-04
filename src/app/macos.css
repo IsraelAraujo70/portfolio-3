@@ -655,80 +655,294 @@
 
 .mac-chat {
   background: #151618;
-  color: #f2f2f7;
+  color: #e2e2e6;
+  container-type: inline-size;
+}
+.mac-chat-timeline {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 24px 22px 16px;
+}
+.mac-chat-thread {
+  max-width: 720px;
+  margin: 0 auto;
 }
 .mac-chat-welcome {
-  padding-top: 14px;
-  text-align: center;
+  padding: 34px 0 24px;
+  max-width: 430px;
+  margin: auto;
 }
 .mac-chat-avatar {
   display: grid;
   place-items: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
-  color: white;
-  background: linear-gradient(145deg, #66c985, #299555);
-  margin: 0 auto 14px;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 40%),
-    0 4px 14px rgb(38 146 84 / 15%);
+  width: 44px;
+  height: 44px;
+  border: 1px solid #35363a;
+  border-radius: 14px;
+  color: #b6b7bc;
+  background: #222326;
+  margin-bottom: 22px;
 }
 .mac-chat-welcome h2 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 7px;
-  letter-spacing: -0.03em;
+  font-size: 21px;
+  font-weight: 550;
+  margin-bottom: 8px;
+  letter-spacing: -0.035em;
+  color: #f2f2f7;
 }
 .mac-chat-welcome p {
-  font-size: 12px;
-  line-height: 1.7;
-  color: #92949c;
-  margin-bottom: 20px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #93949c;
+  margin-bottom: 26px;
+  max-width: 350px;
+}
+.mac-chat-suggestions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 .mac-chat-suggestion {
-  width: 100%;
   text-align: left;
-  padding: 11px 12px;
-  background: #26272a;
-  border: 1px solid #343538;
-  border-radius: 11px;
+  padding: 12px 13px;
+  background: #1e1f22;
+  border: 1px solid #303135;
+  border-radius: 12px;
   color: #b6b7bc;
   font-size: 12px;
+  line-height: 1.5;
   cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 .mac-chat-suggestion:hover {
-  background: #263a50;
-  color: #68adff;
+  background: #292a2e;
+  border-color: #48494e;
+  color: #f2f2f7;
+}
+.mac-chat-message {
+  min-width: 0;
+  margin-bottom: 26px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.mac-chat-user {
+  display: flex;
+  justify-content: flex-end;
+}
+.mac-chat-bubble {
+  max-width: 85%;
+  border-radius: 18px;
+  background: #28292d;
+  padding: 10px 15px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.mac-chat-assistant {
+  padding: 0 2px;
+}
+.mac-chat-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 7px;
+  margin: 9px 0 0 -7px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #96979f;
+  cursor: pointer;
+}
+.mac-chat-copy:hover {
+  background: #28292d;
+  color: #ededf0;
+}
+.mac-chat-thinking {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #96979f;
+  font-size: 12px;
+  padding: 4px 2px 20px;
+}
+.mac-chat-error {
+  color: #fca5a5;
+  font-size: 12px;
+  padding-bottom: 16px;
+}
+.mac-chat-error button {
+  text-decoration: underline;
+  cursor: pointer;
 }
 .mac-chat-form {
-  padding: 12px 16px 16px;
-  border-top: 1px solid #343538;
+  padding: 4px 16px 10px;
+  width: 100%;
+  max-width: 752px;
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+.mac-chat-composer {
+  border: 1px solid #3a3b40;
+  border-radius: 20px;
+  background: #202124;
+  padding: 4px;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 12%);
+}
+.mac-chat-composer:focus-within {
+  border-color: #64666e;
 }
 .mac-chat-input {
-  flex: 1;
-  min-width: 0;
-  border: 1px solid #414246;
-  border-radius: 18px;
-  background: #26272a;
-  padding: 10px 14px;
-  color: #f2f2f7;
-  font-size: 13px;
+  display: block;
+  width: 100%;
+  min-height: 62px;
+  max-height: 160px;
+  resize: none;
+  overflow-y: auto;
+  padding: 11px 12px 4px;
+  background: transparent;
+  color: #ededf0;
+  font-size: 14px;
+  line-height: 1.6;
+  border: 0;
+  border-radius: 16px;
+  outline: none;
+}
+.mac-chat-input:focus-visible {
+  outline: none;
+}
+.mac-chat-input::placeholder {
+  color: #93949c;
+}
+.mac-chat-composer-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 5px 5px 12px;
+}
+.mac-chat-composer-toolbar > span {
+  color: #93949c;
+  font-size: 10px;
 }
 .mac-chat-send {
   display: grid;
   place-items: center;
-  height: 37px;
-  width: 37px;
+  height: 30px;
+  width: 30px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #0070eb;
-  color: white;
+  background: #e5e5e8;
+  color: #1c1d20;
   cursor: pointer;
 }
 .mac-chat-send:disabled {
-  opacity: 0.4;
+  background: #35363b;
+  color: #85868e;
   cursor: not-allowed;
+}
+.mac-chat-disclaimer {
+  margin: 8px 0 0;
+  color: #8e9098;
+  text-align: center;
+  font-size: 10px;
+}
+.chat-markdown {
+  overflow-wrap: anywhere;
+}
+.chat-markdown > :first-child {
+  margin-top: 0;
+}
+.chat-markdown > :last-child {
+  margin-bottom: 0;
+}
+.chat-markdown :where(p, ul, ol, blockquote, pre) {
+  margin: 0.65rem 0;
+}
+.chat-markdown :where(h1, h2, h3, h4, h5, h6) {
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 1.25rem 0 0.5rem;
+  color: #f2f2f7;
+}
+.chat-markdown h1 {
+  font-size: 1.25rem;
+}
+.chat-markdown h2 {
+  font-size: 1.125rem;
+}
+.chat-markdown h3 {
+  font-size: 1rem;
+}
+.chat-markdown :where(h4, h5, h6) {
+  font-size: 0.875rem;
+}
+.chat-markdown :where(ul, ol) {
+  padding-left: 1.4rem;
+}
+.chat-markdown ul {
+  list-style-type: disc;
+}
+.chat-markdown ol {
+  list-style-type: decimal;
+}
+.chat-markdown li {
+  margin: 0.25rem 0;
+}
+.chat-markdown a {
+  color: #8bbcff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.chat-markdown strong {
+  font-weight: 600;
+  color: #f2f2f7;
+}
+.chat-markdown blockquote {
+  border-left: 2px solid #5a5c64;
+  padding-left: 14px;
+  color: #b6b7bc;
+}
+.chat-markdown code {
+  border-radius: 5px;
+  padding: 2px 5px;
+  background: #2a2b2f;
+  font-size: 0.86em;
+  font-family: var(--font-geist-mono), monospace;
+}
+.chat-markdown pre {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid #34353a;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #1b1c1f;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.chat-markdown pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+  border-radius: 0;
+  white-space: pre;
+}
+.chat-markdown hr {
+  border: 0;
+  border-top: 1px solid #34353a;
+  margin: 1.25rem 0;
+}
+@container (max-width: 380px) {
+  .mac-chat-timeline {
+    padding: 20px 16px 12px;
+  }
+  .mac-chat-suggestions {
+    grid-template-columns: 1fr;
+  }
+  .mac-chat-welcome {
+    padding-top: 20px;
+  }
 }
 .mobile-app-title {
   position: sticky;

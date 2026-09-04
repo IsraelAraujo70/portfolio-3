@@ -1,19 +1,68 @@
 "use client";
 
-import { useEffect } from "react";
-import { ArrowUp, Loader2, MessageCircle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  ArrowUp,
+  Check,
+  Copy,
+  Loader2,
+  MessageCircle,
+  Square,
+} from "lucide-react";
 import {
   useAIChat,
   getMessageText,
   chatSuggestions,
 } from "@/hooks/use-ai-chat";
+import { ChatMarkdown } from "./chat-markdown";
 
 interface ChatContentProps {
   autoFocus?: boolean;
   className?: string;
 }
 
-/** Shared Messages-style chat surface for desktop and mobile. */
+/** Copies the original Markdown and reports clipboard failures without losing the response. */
+function CopyResponse({ text }: { text: string }) {
+  const [state, setState] = useState<"idle" | "copied" | "error">("idle");
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setState("copied");
+    } catch {
+      setState("error");
+    }
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setState("idle"), 2200);
+  };
+
+  return (
+    <button
+      type="button"
+      className="mac-chat-copy"
+      onClick={copy}
+      aria-label={state === "copied" ? "Response copied" : "Copy response"}
+    >
+      {state === "copied" ? <Check size={13} /> : <Copy size={13} />}
+      <span aria-live="polite">
+        {state === "copied"
+          ? "Copied"
+          : state === "error"
+            ? "Couldn't copy. Try again"
+            : "Copy"}
+      </span>
+    </button>
+  );
+}
+
+/** T3Code-inspired conversation surface shared by the desktop window and mobile app. */
 export function ChatContent({
   autoFocus = true,
   className = "",
@@ -24,8 +73,11 @@ export function ChatContent({
     setInput,
     isLoading,
     error,
+    stop,
+    regenerate,
     scrollRef,
     inputRef,
+    handleScroll,
     handleSubmit,
     handleSuggestion,
   } = useAIChat();
@@ -36,85 +88,143 @@ export function ChatContent({
     return () => clearTimeout(timer);
   }, [autoFocus, inputRef]);
 
+  useEffect(() => {
+    const textarea = inputRef.current;
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 160)}px`;
+  }, [input, inputRef]);
+
+  const lastMessage = messages.at(-1);
+  const awaitingText =
+    isLoading &&
+    (!lastMessage ||
+      lastMessage.role === "user" ||
+      !getMessageText(lastMessage.parts));
+
   return (
     <div className={`mac-chat flex flex-col h-full min-h-0 ${className}`}>
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-5 py-4 space-y-3"
+        onScroll={handleScroll}
+        className="mac-chat-timeline"
+        role="log"
+        aria-label="Conversation"
         aria-live="polite"
       >
-        {messages.length === 0 && (
-          <div className="mac-chat-welcome">
-            <div className="mac-chat-avatar">
-              <MessageCircle size={27} />
-            </div>
-            <h2>Meet my AI assistant</h2>
-            <p>
-              Ask about my work, experience, or the decisions behind a project.
-            </p>
-            <div className="space-y-2">
-              {chatSuggestions.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  type="button"
-                  onClick={() => handleSuggestion(suggestion)}
-                  className="mac-chat-suggestion"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        {messages.map((message) => {
-          const text = getMessageText(message.parts);
-          if (!text) return null;
-          return (
-            <div
-              key={message.id}
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[85%] whitespace-pre-wrap break-words text-sm px-4 py-2.5 rounded-2xl leading-relaxed ${message.role === "user" ? "bg-[#007aff] text-white rounded-br-md" : "bg-[#2b2c30] text-mac-ink rounded-bl-md"}`}
-              >
-                {text}
+        <div className="mac-chat-thread">
+          {messages.length === 0 && (
+            <div className="mac-chat-welcome">
+              <div className="mac-chat-avatar">
+                <MessageCircle size={24} strokeWidth={1.5} />
+              </div>
+              <h2>What would you like to know?</h2>
+              <p>
+                Explore Israel&apos;s projects, experience, and the decisions
+                behind his work.
+              </p>
+              <div className="mac-chat-suggestions">
+                {chatSuggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => handleSuggestion(suggestion)}
+                    className="mac-chat-suggestion"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
               </div>
             </div>
-          );
-        })}
-        {isLoading && messages.at(-1)?.role === "user" && (
-          <Loader2
-            size={16}
-            className="animate-spin text-mac-muted"
-            aria-label="Assistant is responding"
-          />
-        )}
-        {error && (
-          <p role="alert" className="text-red-400 text-xs text-center">
-            Couldn&apos;t get a response. Please try again.
-          </p>
-        )}
+          )}
+          {messages.map((message, index) => {
+            const text = getMessageText(message.parts);
+            if (!text) return null;
+            const isUser = message.role === "user";
+            return (
+              <article
+                key={message.id}
+                className={`mac-chat-message ${isUser ? "mac-chat-user" : "mac-chat-assistant"}`}
+                aria-label={isUser ? "You" : "Assistant"}
+              >
+                {isUser ? (
+                  <div className="mac-chat-bubble">{text}</div>
+                ) : (
+                  <ChatMarkdown>{text}</ChatMarkdown>
+                )}
+                {!isUser && !(isLoading && index === messages.length - 1) && (
+                  <CopyResponse text={text} />
+                )}
+              </article>
+            );
+          })}
+          {awaitingText && (
+            <div className="mac-chat-thinking" role="status">
+              <Loader2 size={14} className="animate-spin" /> Thinking…
+            </div>
+          )}
+          {error && (
+            <div role="alert" className="mac-chat-error">
+              Couldn&apos;t get a response.{" "}
+              <button type="button" onClick={() => void regenerate()}>
+                Try again
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <form onSubmit={handleSubmit} className="mac-chat-form">
-        <div className="flex items-center gap-2">
-          <input
+        <div className="mac-chat-composer">
+          <textarea
             ref={inputRef}
+            rows={2}
             value={input}
             onChange={(event) => setInput(event.target.value)}
-            placeholder="Ask about Israel…"
+            onKeyDown={(event) => {
+              if (
+                event.key === "Enter" &&
+                !event.shiftKey &&
+                !event.nativeEvent.isComposing &&
+                event.keyCode !== 229
+              ) {
+                event.preventDefault();
+                if (!isLoading) event.currentTarget.form?.requestSubmit();
+              }
+            }}
+            placeholder="Ask about Israel's work…"
             aria-label="Message to Israel's AI assistant"
             className="mac-chat-input"
-            disabled={isLoading}
           />
-          <button
-            type="submit"
-            aria-label="Send message"
-            disabled={!input.trim() || isLoading}
-            className="mac-chat-send"
-          >
-            <ArrowUp size={19} />
-          </button>
+          <div className="mac-chat-composer-toolbar">
+            <span>Shift + Enter for a new line</span>
+            {isLoading ? (
+              <button
+                type="button"
+                aria-label="Stop response"
+                onClick={(event) => {
+                  // Cancelling swaps this button to submit before the click default runs.
+                  event.preventDefault();
+                  void stop();
+                }}
+                className="mac-chat-send"
+              >
+                <Square size={13} fill="currentColor" />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                aria-label="Send message"
+                disabled={!input.trim()}
+                className="mac-chat-send"
+              >
+                <ArrowUp size={18} />
+              </button>
+            )}
+          </div>
         </div>
+        <p className="mac-chat-disclaimer">
+          AI assistant · Based on Israel&apos;s portfolio and résumé
+        </p>
       </form>
     </div>
   );

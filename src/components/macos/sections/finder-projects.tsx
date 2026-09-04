@@ -73,12 +73,14 @@ export function FinderProjects() {
             </span>
             <a
               className="mac-button"
-              href={selected.github}
+              href={selected.website ?? selected.github}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`View ${selected.name} source on GitHub`}
+              aria-label={`View ${selected.name} ${selected.github ? "source on GitHub" : "website"}`}
             >
-              <Code2 size={13} /> View source <ArrowUpRight size={12} />
+              <Code2 size={13} />{" "}
+              {selected.github ? "View source" : "Open project"}{" "}
+              <ArrowUpRight size={12} />
             </a>
           </div>
           <div className="project-preview-body">
@@ -124,7 +126,7 @@ export function FinderProjects() {
         {additionalProjects.map((project) => (
           <a
             key={project.name}
-            href={project.github}
+            href={project.website ?? project.github}
             target="_blank"
             rel="noopener noreferrer"
           >

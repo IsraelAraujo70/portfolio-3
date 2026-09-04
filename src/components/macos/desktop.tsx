@@ -63,7 +63,7 @@ type Action =
 const DEFAULT_SIZES: Record<WindowId, { w: number; h: number }> = {
   finder: { w: 900, h: 700 },
   terminal: { w: 680, h: 420 },
-  chat: { w: 400, h: 520 },
+  chat: { w: 560, h: 640 },
 };
 
 const INITIAL_STATE: State = {
@@ -455,7 +455,7 @@ export function Desktop() {
       positions: {
         finder: { x: (vw - finderW) / 2, y: 54 },
         terminal: { x: vw * 0.08, y: vh * 0.15 },
-        chat: { x: vw - 400 - vw * 0.05, y: vh * 0.12 },
+        chat: { x: vw - DEFAULT_SIZES.chat.w - vw * 0.05, y: vh * 0.12 },
       },
     });
     dispatch({

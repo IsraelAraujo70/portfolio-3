@@ -143,7 +143,7 @@ export function AIChat({
               className="px-5 py-4 border-t border-white/[0.08]"
             >
               <div className="flex items-center gap-2">
-                <input
+                <textarea
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}

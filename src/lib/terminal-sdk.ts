@@ -89,7 +89,7 @@ function formatProjects(): string {
         [
           `\x1b[1m${i + 1}. ${p.name}\x1b[0m \x1b[38;5;245m—\x1b[0m ${p.tagline}`,
           `   \x1b[38;5;245m${p.tech.join(", ")}\x1b[0m`,
-          `   \x1b[4m${p.github}\x1b[0m`,
+          `   \x1b[4m${p.website ?? p.github}\x1b[0m`,
         ].join("\r\n")
     )
     .join("\r\n\r\n");

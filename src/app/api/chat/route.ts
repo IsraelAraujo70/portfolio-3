@@ -7,6 +7,7 @@ const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY!,
 });
 
+/** Streams portfolio answers and cancels the model when the client disconnects. */
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
     model: openrouter.chat(model),
     system: systemPrompt,
     messages: modelMessages,
+    abortSignal: req.signal,
   });
 
   if (format === "text") {
