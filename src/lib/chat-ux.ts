@@ -51,7 +51,7 @@ export function parseStoredChatMessages(raw: string | null): UIMessage[] {
     }).map((message) => ({
       ...message,
       parts: message.parts.map((part) => {
-        if ((part.type === "tool-showProject" || part.type === "tool-showSection") &&
+        if ((part.type === "tool-showProject" || part.type === "tool-showSection" || part.type === "tool-startTour") &&
             "state" in part && part.state !== "output-available" && part.state !== "output-error") {
           return {
             type: part.type,
@@ -74,7 +74,7 @@ export function hasNavigationResult(messages: UIMessage[]): boolean {
   const lastUserIndex = messages.findLastIndex((message) => message.role === "user");
   return messages.slice(lastUserIndex + 1).some((message) =>
     message.parts.some((part) =>
-      (part.type === "tool-showProject" || part.type === "tool-showSection") &&
+      (part.type === "tool-showProject" || part.type === "tool-showSection" || part.type === "tool-startTour") &&
       "state" in part && (part.state === "output-available" || part.state === "output-error")),
   );
 }

@@ -60,7 +60,8 @@ export function ChatMessage({
 }) {
   const text = getMessageText(message.parts);
   const navigationParts = message.parts.filter((part) => part.type === "tool-showProject" || part.type === "tool-showSection");
-  if (!text && navigationParts.length === 0) return null;
+  const tourParts = message.parts.filter((part) => part.type === "tool-startTour");
+  if (!text && navigationParts.length === 0 && tourParts.length === 0) return null;
   const isUser = message.role === "user";
   return (
     <article
@@ -74,6 +75,11 @@ export function ChatMessage({
       )}
       {!isUser && navigationParts.map((part, index) => (
         <ChatNavigation key={"toolCallId" in part ? part.toolCallId : index} part={part} onNavigate={onNavigate} />
+      ))}
+      {!isUser && tourParts.map((part) => "state" in part && "toolCallId" in part && (
+        <div className="mac-chat-tour-event" role="status" key={part.toolCallId}>
+          {part.state === "output-available" ? "AI tour prepared" : part.state === "output-error" ? `Couldn't prepare the tour. ${part.errorText}` : streaming ? "Preparing your tour…" : "Tour preparation was interrupted. Please try again."}
+        </div>
       ))}
       {!isUser && text && !streaming && <CopyResponse text={text} />}
     </article>

@@ -460,6 +460,14 @@ function WindowWrapper({
 export function Desktop() {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const [showNoteForm, setShowNoteForm] = useState(false);
+  const [tourLaunchId, setTourLaunchId] = useState<string | null>(null);
+  const startTour = useCallback(() => {
+    setTourLaunchId((pending) => pending ?? crypto.randomUUID());
+    dispatch({ type: "OPEN", id: "chat" });
+  }, []);
+  const finishTourLaunch = useCallback((id: string) => {
+    setTourLaunchId((pending) => pending === id ? null : pending);
+  }, []);
   const notesRefetchRef = useRef<(() => void) | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState(projects[0].id);
   const [navigation, setNavigation] = useState<NavigationRequest | null>(null);
@@ -582,6 +590,7 @@ export function Desktop() {
     } else if (chat.isMinimized) {
       dispatch({ type: "RESTORE", id: "chat" });
     } else {
+      setTourLaunchId(null);
       dispatch({ type: "MINIMIZE", id: "chat" });
     }
   }, [state.windows.chat]);
@@ -627,6 +636,8 @@ export function Desktop() {
               style,
             }) => (
               <FinderWindow
+                onStartTour={startTour}
+                tourPreparing={tourLaunchId !== null}
                 selectedProjectId={selectedProjectId}
                 onSelectProject={setSelectedProjectId}
                 navigation={navigation}
@@ -678,7 +689,9 @@ export function Desktop() {
               <ChatWindow
                 isOpen
                 onNavigate={navigatePortfolio}
-                onClose={onClose}
+                tourLaunchId={tourLaunchId}
+                onTourLaunchHandled={finishTourLaunch}
+                onClose={() => { setTourLaunchId(null); onClose(); }}
                 onMinimize={onMinimize}
                 onMaximize={onMaximize}
                 onFocus={onFocus}

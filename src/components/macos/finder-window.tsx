@@ -20,6 +20,8 @@ import { FinderContact } from "./sections/finder-contact";
 import { navigationTarget, type NavigationRequest } from "@/lib/portfolio-navigation";
 
 interface FinderWindowProps {
+  onStartTour?: () => void;
+  tourPreparing?: boolean;
   onOpenChat: () => void;
   onOpenTerminal?: () => void;
   onClose?: () => void;
@@ -45,6 +47,8 @@ const sectionIds = [
 
 /** Scrollable portfolio hosted in the desktop window manager. */
 export function FinderWindow({
+  onStartTour,
+  tourPreparing,
   onOpenChat,
   onClose,
   onMinimize,
@@ -155,7 +159,7 @@ export function FinderWindow({
           className="portfolio-surface overflow-y-auto h-full"
         >
           <div id="finder-hero">
-            <FinderHero onOpenChat={onOpenChat} />
+            <FinderHero onOpenChat={onOpenChat} onStartTour={onStartTour} tourPreparing={tourPreparing} />
           </div>
           <div id="finder-projects">
             <FinderProjects selectedProjectId={selectedProjectId} onSelectProject={onSelectProject} />

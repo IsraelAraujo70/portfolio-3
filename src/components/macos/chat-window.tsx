@@ -14,6 +14,8 @@ interface ChatWindowProps {
   dragHandleProps?: Record<string, unknown>;
   style?: CSSProperties;
   onNavigate?: NavigatePortfolio;
+  tourLaunchId?: string | null;
+  onTourLaunchHandled?: (id: string) => void;
 }
 
 /** Host the AI chat inside the desktop window frame. */
@@ -26,6 +28,8 @@ export function ChatWindow({
   dragHandleProps,
   style,
   onNavigate,
+  tourLaunchId,
+  onTourLaunchHandled,
 }: ChatWindowProps) {
   return (
     <WindowChrome
@@ -39,7 +43,7 @@ export function ChatWindow({
       style={style}
       className="flex flex-col w-full h-full shadow-2xl"
     >
-      <ChatContent autoFocus={isOpen} onNavigate={onNavigate} />
+      <ChatContent autoFocus={isOpen} onNavigate={onNavigate} tourLaunchId={tourLaunchId} onTourLaunchHandled={onTourLaunchHandled} />
     </WindowChrome>
   );
 }

@@ -656,7 +656,7 @@
 .mac-chat {
   background: #151618;
   color: #e2e2e6;
-  container-type: inline-size;
+  container-type: size;
 }
 .mac-chat-toolbar {
   display: flex;
@@ -1172,4 +1172,137 @@
 .mac-chat-navigation button:disabled {
   opacity: 0.5;
   cursor: wait;
+}
+
+/* The tour is the desktop's primary invitation, inspired by the model-selector glow. */
+.tour-start-button {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 56px;
+  padding: 8px 9px 8px 21px;
+  border: 1px solid rgb(255 255 255 / 32%);
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(105deg, #087fff 0%, #566bf4 46%, #a777fb 100%);
+  box-shadow: 0 6px 26px rgb(86 107 244 / 38%), inset 0 1px 0 rgb(255 255 255 / 22%);
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.tour-start-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 34px rgb(121 101 248 / 55%), inset 0 1px 0 rgb(255 255 255 / 28%);
+}
+
+.tour-start-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 5px;
+}
+
+.tour-start-button:disabled { cursor: progress; }
+.tour-start-button > svg, .tour-start-label, .tour-start-arrow { position: relative; z-index: 1; }
+.tour-start-label { min-width: 101px; text-align: left; }
+.tour-start-arrow {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-left: 10px;
+  border-radius: 50%;
+  background: #fff;
+  color: #5964df;
+  box-shadow: 0 2px 7px rgb(30 28 97 / 18%);
+}
+
+.tour-start-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.tour-start-particles::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 19%) 50%, transparent 80%);
+  animation: tour-sheen 5s ease-in-out infinite;
+}
+
+.tour-start-particles i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 5px rgb(255 255 255 / 80%);
+  animation: tour-particle 3.5s ease-in-out infinite alternate;
+}
+.tour-start-particles i:nth-child(1) { left: 9%; top: 70%; animation-delay: -1s; }
+.tour-start-particles i:nth-child(2) { left: 21%; top: 23%; animation-delay: -2.3s; }
+.tour-start-particles i:nth-child(3) { left: 32%; top: 78%; animation-delay: -0.8s; }
+.tour-start-particles i:nth-child(4) { left: 43%; top: 16%; animation-delay: -2.8s; }
+.tour-start-particles i:nth-child(5) { left: 53%; top: 72%; animation-delay: -1.7s; }
+.tour-start-particles i:nth-child(6) { left: 65%; top: 24%; animation-delay: -0.4s; }
+.tour-start-particles i:nth-child(7) { left: 71%; top: 77%; animation-delay: -2.1s; }
+.tour-start-particles i:nth-child(8) { left: 80%; top: 36%; animation-delay: -3.1s; }
+.tour-start-particles i:nth-child(9) { left: 17%; top: 47%; animation-delay: -1.4s; }
+
+@keyframes tour-particle {
+  from { opacity: 0.15; transform: translate3d(-3px, 3px, 0) scale(0.65); }
+  to { opacity: 0.8; transform: translate3d(7px, -5px, 0) scale(1); }
+}
+@keyframes tour-sheen {
+  0%, 15% { transform: translateX(-100%); opacity: 0; }
+  45% { opacity: 1; }
+  75%, 100% { transform: translateX(100%); opacity: 0; }
+}
+
+.mac-chat-tour {
+  flex: 0 0 auto;
+  margin: 0 16px 8px;
+  padding: 13px 15px;
+  border: 1px solid rgb(155 139 255 / 28%);
+  border-radius: 15px;
+  background: linear-gradient(130deg, rgb(50 81 161 / 14%), rgb(122 79 170 / 11%));
+  color: #eeeef4;
+}
+.mac-chat-tour-header { display: flex; align-items: center; gap: 10px; font-size: 11px; color: #bfb7f8; }
+.mac-chat-tour-header > span:first-child { display: flex; align-items: center; gap: 6px; flex: 1; }
+.mac-chat-tour-header button { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
+.mac-chat-tour-header button:hover { background: rgb(255 255 255 / 8%); }
+.mac-chat-tour-copy { max-height: min(180px, 24vh); overflow-y: auto; margin-top: 5px; }
+.mac-chat-tour-name { font-size: 10px; color: #9e9dab; }
+.mac-chat-tour-copy h2 { margin: 4px 0 7px; font-size: 15px; font-weight: 600; line-height: 1.35; }
+.mac-chat-tour-copy p { font-size: 12px; line-height: 1.6; color: #c8c7d4; margin: 0; }
+.mac-chat-tour-copy p[role="alert"] { color: #f0aaa7; margin-top: 6px; }
+.mac-chat-tour-controls { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.mac-chat-tour-controls button { display: flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 7px; font-size: 11px; cursor: pointer; }
+.mac-chat-tour-controls button:disabled { opacity: 0.4; cursor: default; }
+.mac-chat-tour-controls .mac-chat-tour-next { color: #fff; background: rgb(130 108 244 / 24%); }
+.mac-chat-tour button:focus-visible { outline: 2px solid #c4b5ff; outline-offset: 3px; }
+.mac-chat-tour-event { margin-top: 9px; font-size: 11px; color: #bfb7f8; }
+
+@container (max-height: 520px) {
+  .mac-chat-tour { padding: 7px 12px; }
+  .mac-chat-tour-copy { max-height: 90px; }
+  .mac-chat-tour-name { display: none; }
+  .mac-chat-tour-copy h2 { font-size: 13px; margin-top: 0; }
+  .mac-chat-tour-controls { margin-top: 7px; }
+  .mac-chat-tour + .mac-chat-timeline { padding-top: 10px; padding-bottom: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-start-button { transition: none; }
+  .tour-start-button:hover:not(:disabled) { transform: none; }
+  .tour-start-particles::before, .tour-start-particles i { animation: none; }
+  .tour-start-particles::before { display: none; }
+  .tour-start-particles i { opacity: 0.5; }
 }

@@ -3,9 +3,14 @@
 import Image from "next/image";
 import { ArrowUpRight, MessageCircle, MapPin } from "lucide-react";
 import { personalInfo } from "@/lib/resume-data";
+import { TourStartButton } from "../tour-start-button";
 
 /** Introduce Israel and expose the two primary portfolio actions. */
-export function FinderHero({ onOpenChat }: { onOpenChat: () => void }) {
+export function FinderHero({ onOpenChat, onStartTour, tourPreparing }: {
+  onOpenChat: () => void;
+  onStartTour?: () => void;
+  tourPreparing?: boolean;
+}) {
   return (
     <section className="portfolio-hero" aria-labelledby="portfolio-name">
       <div className="portfolio-intro">
@@ -27,9 +32,10 @@ export function FinderHero({ onOpenChat }: { onOpenChat: () => void }) {
         />
       </div>
       <div className="portfolio-actions">
+        {onStartTour && <TourStartButton onStart={onStartTour} preparing={tourPreparing} />}
         <button
           type="button"
-          className="mac-button mac-button-primary"
+          className={`mac-button${onStartTour ? "" : " mac-button-primary"}`}
           onClick={() => {
             const reduceMotion = window.matchMedia(
               "(prefers-reduced-motion: reduce)",
@@ -42,9 +48,9 @@ export function FinderHero({ onOpenChat }: { onOpenChat: () => void }) {
         >
           Explore my work <ArrowUpRight size={14} />
         </button>
-        <button type="button" className="mac-button" onClick={onOpenChat}>
+        {!onStartTour && <button type="button" className="mac-button" onClick={onOpenChat}>
           <MessageCircle size={14} /> Talk to my AI
-        </button>
+        </button>}
       </div>
       <div className="portfolio-meta">
         <span>{personalInfo.subtitle}</span>

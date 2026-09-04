@@ -8,16 +8,21 @@ import { ChatComposer } from "./chat-composer";
 import type { NavigatePortfolio } from "@/lib/portfolio-navigation";
 import { ChatEmptyState } from "./chat-empty-state";
 import { ChatMessage } from "./chat-message";
+import { ChatTour } from "./chat-tour";
 
 /** T3Code-inspired chat that retains session history, retry, and reader-controlled scrolling. */
 export function ChatContent({
   autoFocus = true,
   className = "",
   onNavigate,
+  tourLaunchId,
+  onTourLaunchHandled,
 }: {
   autoFocus?: boolean;
   className?: string;
   onNavigate?: NavigatePortfolio;
+  tourLaunchId?: string | null;
+  onTourLaunchHandled?: (id: string) => void;
 }) {
   const {
     messages,
@@ -33,7 +38,9 @@ export function ChatContent({
     handleStop,
     handleRetry,
     handleNewConversation,
-  } = useAIChat(onNavigate);
+    tour,
+    handleEndTour,
+  } = useAIChat(onNavigate, tourLaunchId, onTourLaunchHandled);
   const scrollRef = useRef<HTMLDivElement>(null);
   const followsBottom = useRef(true);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -74,6 +81,9 @@ export function ChatContent({
           <span>New chat</span>
         </button>
       </header>
+      {tour.state && (
+        <ChatTour tour={tour.state} busy={isLoading || tour.busy} onGoTo={tour.goTo} onEnd={handleEndTour} />
+      )}
       <div
         ref={scrollRef}
         onScroll={(event) => {

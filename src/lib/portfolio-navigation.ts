@@ -27,6 +27,80 @@ export interface NavigationRequest {
   action: PortfolioAction;
 }
 
+export interface PortfolioTour {
+  title: string;
+  steps: Array<{
+    title: string;
+    narration: string;
+    destination: PortfolioAction;
+  }>;
+}
+
+export interface TourContext {
+  destinations: PortfolioAction[];
+  index: number;
+}
+
+function parseDestination(value: unknown, projects: readonly PortfolioProject[]): PortfolioAction {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Invalid tour destination.");
+  }
+  const { type, ...input } = value as Record<string, unknown>;
+  if (typeof type !== "string") throw new Error("Missing tour destination.");
+  return parsePortfolioAction(type, input, projects);
+}
+
+function tourText(value: unknown, maxLength: number): string {
+  if (typeof value !== "string" || !value.trim() || value.length > maxLength) {
+    throw new Error("Tour text is missing or too long.");
+  }
+  return value.trim();
+}
+
+/** Validate the entire generated route before opening any destination. */
+export function parsePortfolioTour(value: unknown, projects: readonly PortfolioProject[]): PortfolioTour {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Invalid tour.");
+  }
+  const fields = value as Record<string, unknown>;
+  if (!Array.isArray(fields.steps) || fields.steps.length < 1 || fields.steps.length > 4 ||
+      Object.keys(fields).some((key) => key !== "title" && key !== "steps")) {
+    throw new Error("A tour needs one to four stops.");
+  }
+  const seen = new Set<string>();
+  const steps = fields.steps.map((value: unknown) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid tour stop.");
+    const step = value as Record<string, unknown>;
+    if (Object.keys(step).some((key) => !["title", "narration", "destination"].includes(key))) {
+      throw new Error("Invalid tour stop fields.");
+    }
+    const destination = parseDestination(step.destination, projects);
+    const target = navigationTarget(destination);
+    if (seen.has(target)) throw new Error("Tour stops must be distinct.");
+    seen.add(target);
+    return {
+      title: tourText(step.title, 70),
+      narration: tourText(step.narration, 500),
+      destination,
+    };
+  });
+  return { title: tourText(fields.title, 80), steps };
+}
+
+/** Accept navigation context only; caller-provided prose never becomes verified facts. */
+export function parseTourContext(value: unknown, projects: readonly PortfolioProject[]): TourContext | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const fields = value as Record<string, unknown>;
+  if (!Array.isArray(fields.destinations) || fields.destinations.length < 1 || fields.destinations.length > 4 ||
+      !Number.isInteger(fields.index) || typeof fields.index !== "number" ||
+      fields.index < 0 || fields.index >= fields.destinations.length) return null;
+  try {
+    return { index: fields.index, destinations: fields.destinations.map((item: unknown) => parseDestination(item, projects)) };
+  } catch {
+    return null;
+  }
+}
+
 /** Validate model and restored-card inputs against destinations that actually exist. */
 export function parsePortfolioAction(
   name: string,
