@@ -14,6 +14,7 @@ interface ChatWindowProps {
   style?: CSSProperties;
 }
 
+/** Host the AI chat inside the desktop window frame. */
 export function ChatWindow({
   isOpen,
   onClose,
@@ -25,7 +26,7 @@ export function ChatWindow({
 }: ChatWindowProps) {
   return (
     <WindowChrome
-      title="Messages — AI Assistant"
+      title="AI assistant"
       isOpen={isOpen}
       onClose={onClose}
       onMinimize={onMinimize}

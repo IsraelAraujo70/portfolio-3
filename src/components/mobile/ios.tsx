@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, MotionConfig } from "framer-motion";
 import { DesktopWallpaper } from "@/components/macos/desktop-wallpaper";
 import { StatusBar } from "./status-bar";
 import { HomeScreen, type AppId, type AppLaunch } from "./home-screen";
@@ -19,6 +19,7 @@ const GRADIENTS: Record<AppId, string> = {
   notes: "from-amber-400 to-yellow-500",
 };
 
+/** Mobile application shell with system reduced-motion preferences. */
 export function IOS() {
   const [open, setOpen] = useState<AppLaunch | null>(null);
 
@@ -28,29 +29,31 @@ export function IOS() {
   const morphId = open ? `${open.source}-${open.id}` : "";
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative">
-      <DesktopWallpaper />
-      <HomeScreen onLaunch={setOpen} />
+    <MotionConfig reducedMotion="user">
+      <div className="h-screen w-screen overflow-hidden relative">
+        <DesktopWallpaper />
+        <HomeScreen onLaunch={setOpen} />
 
-      <AnimatePresence>
-        {open && (
-          <AppFrame
-            key={morphId}
-            morphLayoutId={morphId}
-            gradient={GRADIENTS[open.id]}
-          >
-            {open.id === "portfolio" && (
-              <PortfolioApp onOpenChat={launchChat} />
-            )}
-            {open.id === "terminal" && <TerminalApp onClose={close} />}
-            {open.id === "chat" && <ChatApp />}
-            {open.id === "notes" && <NotesApp />}
-          </AppFrame>
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {open && (
+            <AppFrame
+              key={morphId}
+              morphLayoutId={morphId}
+              gradient={GRADIENTS[open.id]}
+            >
+              {open.id === "portfolio" && (
+                <PortfolioApp onOpenChat={launchChat} />
+              )}
+              {open.id === "terminal" && <TerminalApp onClose={close} />}
+              {open.id === "chat" && <ChatApp />}
+              {open.id === "notes" && <NotesApp />}
+            </AppFrame>
+          )}
+        </AnimatePresence>
 
-      <StatusBar />
-      <HomeIndicator appOpen={!!open} onClose={close} />
-    </div>
+        <StatusBar />
+        <HomeIndicator appOpen={!!open} onClose={close} />
+      </div>
+    </MotionConfig>
   );
 }

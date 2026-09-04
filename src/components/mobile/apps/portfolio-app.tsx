@@ -12,27 +12,29 @@ interface PortfolioAppProps {
   onOpenChat: () => void;
 }
 
+/** Mobile portfolio shares the desktop content and dark surface. */
 export function PortfolioApp({ onOpenChat }: PortfolioAppProps) {
   return (
     <MotionConfig reducedMotion="user">
       <div
-        className="h-full w-full overflow-y-auto bg-[#0a0a0f]"
+        className="portfolio-surface h-full w-full overflow-y-auto"
         style={{
           paddingTop: "calc(env(safe-area-inset-top) + 44px)",
           paddingBottom: "calc(env(safe-area-inset-bottom) + 36px)",
         }}
       >
+        <div className="mobile-app-title">Portfolio</div>
         <div id="finder-hero">
           <FinderHero onOpenChat={onOpenChat} />
+        </div>
+        <div id="finder-projects">
+          <FinderProjects />
         </div>
         <div id="finder-about">
           <FinderAbout />
         </div>
         <div id="finder-experience">
           <FinderExperience />
-        </div>
-        <div id="finder-projects">
-          <FinderProjects />
         </div>
         <div id="finder-opensource">
           <FinderOpenSource />

@@ -14,6 +14,7 @@ interface TerminalWindowProps {
   style?: CSSProperties;
 }
 
+/** Host the terminal inside the dark desktop window frame. */
 export function TerminalWindow({
   isOpen,
   onClose,
@@ -25,7 +26,7 @@ export function TerminalWindow({
 }: TerminalWindowProps) {
   return (
     <WindowChrome
-      title="Terminal — israel@portfolio"
+      title="israel@portfolio: ~"
       isOpen={isOpen}
       onClose={onClose}
       onMinimize={onMinimize}

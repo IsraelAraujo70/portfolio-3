@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, type CSSProperties } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  type CSSProperties,
+} from "react";
+import { FolderOpen } from "lucide-react";
 import { MotionConfig } from "framer-motion";
 import { WindowChrome } from "./window-chrome";
 import { FinderSidebar } from "./finder-sidebar";
@@ -22,8 +29,16 @@ interface FinderWindowProps {
   style?: CSSProperties;
 }
 
-const sectionIds = ["hero", "about", "experience", "projects", "opensource", "contact"];
+const sectionIds = [
+  "hero",
+  "projects",
+  "about",
+  "experience",
+  "opensource",
+  "contact",
+];
 
+/** Scrollable portfolio hosted in the desktop window manager. */
 export function FinderWindow({
   onOpenChat,
   onClose,
@@ -39,7 +54,12 @@ export function FinderWindow({
   const handleNavigate = useCallback((id: string) => {
     const el = document.getElementById(`finder-${id}`);
     if (el && contentRef.current) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+        block: "start",
+      });
     }
   }, []);
 
@@ -60,7 +80,7 @@ export function FinderWindow({
         root: container,
         rootMargin: "-20% 0px -60% 0px",
         threshold: 0,
-      }
+      },
     );
 
     sectionIds.forEach((id) => {
@@ -74,10 +94,8 @@ export function FinderWindow({
   return (
     <MotionConfig reducedMotion="user">
       <WindowChrome
-        title="Israel Araujo — Portfolio"
-        icon={
-          <img src="/dev-icon.svg" alt="" className="w-4 h-4" />
-        }
+        title="Portfolio"
+        icon={<FolderOpen size={17} className="text-mac-blue" />}
         onClose={onClose}
         onMinimize={onMinimize}
         onMaximize={onMaximize}
@@ -92,18 +110,21 @@ export function FinderWindow({
           />
         }
       >
-        <div ref={contentRef} className="overflow-y-auto h-full scroll-smooth">
+        <div
+          ref={contentRef}
+          className="portfolio-surface overflow-y-auto h-full"
+        >
           <div id="finder-hero">
             <FinderHero onOpenChat={onOpenChat} />
+          </div>
+          <div id="finder-projects">
+            <FinderProjects />
           </div>
           <div id="finder-about">
             <FinderAbout />
           </div>
           <div id="finder-experience">
             <FinderExperience />
-          </div>
-          <div id="finder-projects">
-            <FinderProjects />
           </div>
           <div id="finder-opensource">
             <FinderOpenSource />

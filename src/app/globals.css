@@ -1,9 +1,16 @@
 @import "tailwindcss";
+@import "./macos.css";
 
 @theme inline {
   --color-background: #0a0a0f;
   --color-foreground: #ededed;
   --color-accent: #22d3ee;
+  --color-mac-ink: #f2f2f7;
+  --color-mac-secondary: #b6b7bc;
+  --color-mac-muted: #92949c;
+  --color-mac-blue: #68adff;
+  --color-mac-line: #343538;
+  --color-mac-surface: #151618;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --animate-float: float 20s ease-in-out infinite;

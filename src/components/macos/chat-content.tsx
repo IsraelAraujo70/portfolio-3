@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Send, Loader2 } from "lucide-react";
+import { ArrowUp, Loader2, MessageCircle } from "lucide-react";
 import {
   useAIChat,
   getMessageText,
@@ -13,7 +13,11 @@ interface ChatContentProps {
   className?: string;
 }
 
-export function ChatContent({ autoFocus = true, className = "" }: ChatContentProps) {
+/** Shared Messages-style chat surface for desktop and mobile. */
+export function ChatContent({
+  autoFocus = true,
+  className = "",
+}: ChatContentProps) {
   const {
     messages,
     input,
@@ -27,81 +31,88 @@ export function ChatContent({ autoFocus = true, className = "" }: ChatContentPro
   } = useAIChat();
 
   useEffect(() => {
-    if (autoFocus) setTimeout(() => inputRef.current?.focus(), 300);
+    if (!autoFocus) return;
+    const timer = setTimeout(() => inputRef.current?.focus(), 300);
+    return () => clearTimeout(timer);
   }, [autoFocus, inputRef]);
 
   return (
-    <div className={`flex flex-col h-full min-h-0 ${className}`}>
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+    <div className={`mac-chat flex flex-col h-full min-h-0 ${className}`}>
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-5 py-4 space-y-3"
+        aria-live="polite"
+      >
         {messages.length === 0 && (
-          <div className="space-y-3">
-            <p className="text-gray-400 text-sm">
-              Hi! I&apos;m Israel&apos;s AI assistant. Ask me anything about his
-              skills, experience, or projects.
+          <div className="mac-chat-welcome">
+            <div className="mac-chat-avatar">
+              <MessageCircle size={27} />
+            </div>
+            <h2>Meet my AI assistant</h2>
+            <p>
+              Ask about my work, experience, or the decisions behind a project.
             </p>
             <div className="space-y-2">
-              {chatSuggestions.map((s) => (
+              {chatSuggestions.map((suggestion) => (
                 <button
-                  key={s}
-                  onClick={() => handleSuggestion(s)}
-                  className="block w-full text-left text-xs px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-gray-400 hover:text-cyan-400 hover:border-cyan-400/20 active:bg-white/[0.08] transition-all touch-manipulation"
+                  key={suggestion}
+                  type="button"
+                  onClick={() => handleSuggestion(suggestion)}
+                  className="mac-chat-suggestion"
                 >
-                  {s}
+                  {suggestion}
                 </button>
               ))}
             </div>
           </div>
         )}
-
-        {messages.map((msg) => {
-          const text = getMessageText(msg.parts);
+        {messages.map((message) => {
+          const text = getMessageText(message.parts);
           if (!text) return null;
           return (
             <div
-              key={msg.id}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              key={message.id}
+              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[85%] text-sm px-4 py-2.5 rounded-2xl leading-relaxed ${
-                  msg.role === "user"
-                    ? "bg-cyan-400/15 text-cyan-100 rounded-br-md"
-                    : "bg-white/[0.06] text-gray-300 rounded-bl-md"
-                }`}
+                className={`max-w-[85%] whitespace-pre-wrap break-words text-sm px-4 py-2.5 rounded-2xl leading-relaxed ${message.role === "user" ? "bg-[#007aff] text-white rounded-br-md" : "bg-[#2b2c30] text-mac-ink rounded-bl-md"}`}
               >
                 {text}
               </div>
             </div>
           );
         })}
-
-        {isLoading && messages.length > 0 && messages[messages.length - 1]?.role === "user" && (
-          <div className="flex justify-start">
-            <div className="bg-white/[0.06] text-gray-400 px-4 py-2.5 rounded-2xl rounded-bl-md">
-              <Loader2 size={16} className="animate-spin" />
-            </div>
-          </div>
+        {isLoading && messages.at(-1)?.role === "user" && (
+          <Loader2
+            size={16}
+            className="animate-spin text-mac-muted"
+            aria-label="Assistant is responding"
+          />
         )}
-
         {error && (
-          <p className="text-red-400/80 text-xs text-center">Something went wrong. Please try again.</p>
+          <p role="alert" className="text-red-400 text-xs text-center">
+            Couldn&apos;t get a response. Please try again.
+          </p>
         )}
       </div>
-
-      <form onSubmit={handleSubmit} className="px-5 py-4 border-t border-white/[0.08]">
+      <form onSubmit={handleSubmit} className="mac-chat-form">
         <div className="flex items-center gap-2">
           <input
             ref={inputRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about my experience..."
-            className="flex-1 bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-cyan-400/30 transition-colors"
+            onChange={(event) => setInput(event.target.value)}
+            placeholder="Ask about Israel…"
+            aria-label="Message to Israel's AI assistant"
+            className="mac-chat-input"
+            disabled={isLoading}
           />
           <button
             type="submit"
+            aria-label="Send message"
             disabled={!input.trim() || isLoading}
-            className="p-2.5 rounded-xl bg-cyan-400/10 border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/20 active:bg-cyan-400/25 disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
+            className="mac-chat-send"
           >
-            <Send size={16} />
+            <ArrowUp size={19} />
           </button>
         </div>
       </form>

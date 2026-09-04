@@ -2,11 +2,12 @@
 
 import { ChatContent } from "@/components/macos/chat-content";
 
+/** Fullscreen mobile presentation of the shared chat. */
 export function ChatApp() {
   return (
-    <div className="h-full w-full bg-[#0a0a0f] flex flex-col">
+    <div className="h-full w-full bg-mac-surface flex flex-col">
       <div
-        className="shrink-0 flex items-center justify-center h-12 border-b border-white/[0.08]"
+        className="shrink-0 flex items-center justify-center h-12 border-b border-mac-line"
         style={{ marginTop: "calc(env(safe-area-inset-top) + 44px)" }}
       >
         <span className="text-white/85 text-sm font-medium">AI Assistant</span>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type ReactNode, type CSSProperties } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { type ReactNode, type CSSProperties } from "react";
+import { motion } from "framer-motion";
 
 interface WindowChromeProps {
   title: string;
@@ -19,6 +19,7 @@ interface WindowChromeProps {
   style?: CSSProperties;
 }
 
+/** Shared glass frame; window movement and visibility are owned by Desktop. */
 export function WindowChrome({
   title,
   icon,
@@ -34,100 +35,65 @@ export function WindowChrome({
   dark = false,
   style,
 }: WindowChromeProps) {
-  const [hoverTrafficLights, setHoverTrafficLights] = useState(false);
-
   if (!isOpen) return null;
 
-  const glassClass = dark
-    ? "bg-black/80 border border-white/[0.1]"
-    : "liquid-glass";
-
-  const blurStyle: CSSProperties = {
-    backdropFilter: "blur(80px) saturate(120%)",
-    WebkitBackdropFilter: "blur(80px) saturate(120%)",
-    ...style,
-  };
-
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          data-window
-          initial={{ opacity: 0, scale: 0.95, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.5, y: 300 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          style={blurStyle}
-          className={`rounded-xl overflow-hidden flex flex-col ${glassClass} ${className}`}
-          onPointerDown={onFocus}
-        >
-          <div
-            className={`flex items-center h-12 px-4 border-b ${
-              dark ? "border-white/[0.08]" : "border-white/[0.08]"
-            } select-none shrink-0`}
-            {...dragHandleProps}
+    <motion.div
+      data-window
+      role="region"
+      aria-label={title}
+      style={style}
+      className={`mac-window ${dark ? "mac-window-dark" : ""} ${sidebar ? "mac-window-with-sidebar" : ""} ${className}`}
+      onPointerDown={onFocus}
+    >
+      <div className="mac-titlebar" {...dragHandleProps}>
+        <div className="mac-traffic-lights">
+          <button
+            type="button"
+            aria-label={`Close ${title}`}
+            onClick={onClose}
+            className="bg-[#ff5f57]"
           >
-            <div
-              className="flex items-center gap-2 mr-4"
-              onMouseEnter={() => setHoverTrafficLights(true)}
-              onMouseLeave={() => setHoverTrafficLights(false)}
-            >
-              <button
-                onClick={onClose}
-                className="w-3 h-3 rounded-full bg-[#ff5f57] flex items-center justify-center group"
-              >
-                {hoverTrafficLights && (
-                  <svg viewBox="0 0 12 12" className="w-2 h-2">
-                    <path d="M3 3l6 6M9 3l-6 6" stroke="#4a0002" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                )}
-              </button>
-              <button
-                onClick={onMinimize}
-                className="w-3 h-3 rounded-full bg-[#febc2e] flex items-center justify-center"
-              >
-                {hoverTrafficLights && (
-                  <svg viewBox="0 0 12 12" className="w-2 h-2">
-                    <path d="M2 6h8" stroke="#995700" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                )}
-              </button>
-              <button
-                onClick={onMaximize}
-                className="w-3 h-3 rounded-full bg-[#28c840] flex items-center justify-center"
-              >
-                {hoverTrafficLights && (
-                  <svg viewBox="0 0 12 12" className="w-2 h-2">
-                    <path d="M3 3l3 3-3 3M9 3l-3 3 3 3" stroke="#006500" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
-              </button>
-            </div>
-
-            <div className="flex-1 flex items-center justify-center gap-2">
-              {icon}
-              <span className={`text-xs ${dark ? "text-gray-400" : "text-white/60"}`}>
-                {title}
-              </span>
-            </div>
-
-            <div className="w-[52px]" />
-          </div>
-
-          <div className="flex flex-1 min-h-0 overflow-hidden">
-            {sidebar && (
-              <div className={`w-[200px] shrink-0 overflow-y-auto border-r ${
-                dark ? "border-white/[0.06] bg-white/[0.02]" : "border-white/[0.06] bg-white/[0.03]"
-              }`}>
-                {sidebar}
-              </div>
-            )}
-            <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
-              {children}
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path d="m3 3 6 6m0-6-6 6" stroke="#6b1310" strokeWidth="1.4" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            aria-label={`Minimize ${title}`}
+            onClick={onMinimize}
+            className="bg-[#febc2e]"
+          >
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M2 6h8" stroke="#825309" strokeWidth="1.4" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            aria-label={`Toggle fullscreen ${title}`}
+            onClick={onMaximize}
+            className="bg-[#28c840]"
+          >
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path
+                d="M2 5V2h3m5 5v3H7M2 2l3 3m5 5L7 7"
+                stroke="#0b6220"
+                fill="none"
+                strokeWidth="1.2"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="mac-title">
+          {icon}
+          <span>{title}</span>
+        </div>
+        <div className="mac-titlebar-spacer" />
+      </div>
+      <div className="mac-window-body">
+        {sidebar && <aside className="mac-window-sidebar">{sidebar}</aside>}
+        <div className="mac-window-content">{children}</div>
+      </div>
+    </motion.div>
   );
 }

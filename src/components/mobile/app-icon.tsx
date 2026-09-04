@@ -14,8 +14,10 @@ export interface AppIconConfig {
 
 interface AppIconProps extends AppIconConfig {
   morphLayoutId?: string;
+  accessibleLabel?: string;
 }
 
+/** App icon shared by the mobile home screen and Dock. */
 export function AppIcon({
   label,
   gradient,
@@ -23,11 +25,12 @@ export function AppIcon({
   onTap,
   href,
   morphLayoutId,
+  accessibleLabel,
 }: AppIconProps) {
   const tile = (
     <motion.div
       layoutId={morphLayoutId}
-      className={`w-full aspect-square bg-gradient-to-br ${gradient} flex items-center justify-center`}
+      className={`mac-app-icon w-full aspect-square bg-gradient-to-br ${gradient} flex items-center justify-center`}
       style={{
         borderRadius: "22%",
         boxShadow:
@@ -67,6 +70,7 @@ export function AppIcon({
   return (
     <motion.button
       type="button"
+      aria-label={accessibleLabel ?? label}
       onClick={onTap}
       whileTap={{ scale: 0.92 }}
       className="flex flex-col items-center touch-manipulation w-full"

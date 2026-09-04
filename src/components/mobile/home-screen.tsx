@@ -7,7 +7,12 @@ import {
   StickyNote,
   Mail,
 } from "lucide-react";
-import { GitHubIcon, WhatsAppIcon, XIcon } from "@/components/ui/icons";
+import {
+  GitHubIcon,
+  WhatsAppIcon,
+  XIcon,
+  LinkedInIcon,
+} from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
 import { AppIcon, type AppIconConfig } from "./app-icon";
 
@@ -22,7 +27,12 @@ interface HomeScreenProps {
   onLaunch: (target: AppLaunch) => void;
 }
 
-const ACTIONABLE: { id: AppId; label: string; gradient: string; icon: React.ReactNode }[] = [
+const ACTIONABLE: {
+  id: AppId;
+  label: string;
+  gradient: string;
+  icon: React.ReactNode;
+}[] = [
   {
     id: "portfolio",
     label: "Portfolio",
@@ -49,13 +59,20 @@ const ACTIONABLE: { id: AppId; label: string; gradient: string; icon: React.Reac
   },
 ];
 
+/** Mobile home screen with the same app actions as the desktop Dock. */
 export function HomeScreen({ onLaunch }: HomeScreenProps) {
   const linkIcons: AppIconConfig[] = [
     {
       id: "github",
       label: "GitHub",
       gradient: "from-neutral-700 to-neutral-900",
-      icon: <GitHubIcon width={36} height={36} className="text-white drop-shadow-sm" />,
+      icon: (
+        <GitHubIcon
+          width={36}
+          height={36}
+          className="text-white drop-shadow-sm"
+        />
+      ),
       href: personalInfo.github,
     },
     {
@@ -70,10 +87,10 @@ export function HomeScreen({ onLaunch }: HomeScreenProps) {
       label: "LinkedIn",
       gradient: "from-[#0077B5] to-[#005fa3]",
       icon: (
-        <img
-          src="/linkedin-icon.svg"
-          alt=""
-          className="w-9 h-9 brightness-0 invert drop-shadow-sm"
+        <LinkedInIcon
+          width={34}
+          height={34}
+          className="text-white drop-shadow-sm"
         />
       ),
       href: personalInfo.linkedin,
@@ -82,14 +99,22 @@ export function HomeScreen({ onLaunch }: HomeScreenProps) {
       id: "whatsapp",
       label: "WhatsApp",
       gradient: "from-[#25D366] to-[#128C7E]",
-      icon: <WhatsAppIcon width={32} height={32} className="text-white drop-shadow-sm" />,
+      icon: (
+        <WhatsAppIcon
+          width={32}
+          height={32}
+          className="text-white drop-shadow-sm"
+        />
+      ),
       href: personalInfo.whatsapp,
     },
     {
       id: "x",
       label: "X",
       gradient: "from-zinc-800 to-black",
-      icon: <XIcon width={28} height={28} className="text-white drop-shadow-sm" />,
+      icon: (
+        <XIcon width={28} height={28} className="text-white drop-shadow-sm" />
+      ),
       href: personalInfo.x,
     },
   ];
@@ -126,20 +151,13 @@ export function HomeScreen({ onLaunch }: HomeScreenProps) {
           <span className="w-1.5 h-1.5 rounded-full bg-white" />
           <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
         </div>
-        <div
-          style={{
-            backdropFilter: "blur(40px) saturate(160%)",
-            WebkitBackdropFilter: "blur(40px) saturate(160%)",
-            background: "rgba(255, 255, 255, 0.18)",
-            border: "1px solid rgba(255, 255, 255, 0.22)",
-          }}
-          className="grid grid-cols-4 gap-3 px-3 py-3 rounded-[28px]"
-        >
+        <div className="mac-dock grid grid-cols-4 gap-3">
           {ACTIONABLE.map((app) => (
             <div key={`dock-${app.id}`} className="w-14">
               <AppIcon
                 id={`dock-${app.id}`}
                 label=""
+                accessibleLabel={app.label}
                 gradient={app.gradient}
                 icon={app.icon}
                 morphLayoutId={`dock-${app.id}`}

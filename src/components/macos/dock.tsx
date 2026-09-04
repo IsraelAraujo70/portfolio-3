@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type MouseEvent, type ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   FolderOpen,
   Terminal,
@@ -9,7 +9,12 @@ import {
   StickyNote,
   Mail,
 } from "lucide-react";
-import { GitHubIcon, WhatsAppIcon, XIcon } from "@/components/ui/icons";
+import {
+  GitHubIcon,
+  WhatsAppIcon,
+  XIcon,
+  LinkedInIcon,
+} from "@/components/ui/icons";
 import { personalInfo } from "@/lib/resume-data";
 
 interface DockItemConfig {
@@ -30,9 +35,17 @@ interface DockProps {
   openWindows: string[];
 }
 
-export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNotes, openWindows }: DockProps) {
+/** Glass application launcher with focusable labels and running indicators. */
+export function Dock({
+  onToggleTerminal,
+  onToggleChat,
+  onClickFinder,
+  onToggleNotes,
+  openWindows,
+}: DockProps) {
   const dockRef = useRef<HTMLDivElement>(null);
-  const [mouseX, setMouseX] = useState<number | null>(null);
+  const [scales, setScales] = useState<Record<string, number>>({});
+  const reducedMotion = useReducedMotion();
 
   const items: DockItemConfig[] = [
     {
@@ -67,7 +80,13 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
     {
       id: "github",
       label: "GitHub",
-      icon: <GitHubIcon width={26} height={26} className="text-white drop-shadow-sm" />,
+      icon: (
+        <GitHubIcon
+          width={26}
+          height={26}
+          className="text-white drop-shadow-sm"
+        />
+      ),
       gradient: "from-neutral-600 to-neutral-800",
       href: personalInfo.github,
     },
@@ -81,33 +100,55 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
     {
       id: "linkedin",
       label: "LinkedIn",
-      icon: <img src="/linkedin-icon.svg" alt="LinkedIn" className="w-7 h-7 brightness-0 invert drop-shadow-sm" />,
+      icon: (
+        <LinkedInIcon
+          width={27}
+          height={27}
+          className="text-white drop-shadow-sm"
+        />
+      ),
       gradient: "from-[#0077B5] to-[#005fa3]",
       href: personalInfo.linkedin,
     },
     {
       id: "whatsapp",
       label: "WhatsApp",
-      icon: <WhatsAppIcon width={27} height={27} className="text-white drop-shadow-sm" />,
+      icon: (
+        <WhatsAppIcon
+          width={27}
+          height={27}
+          className="text-white drop-shadow-sm"
+        />
+      ),
       gradient: "from-[#25D366] to-[#128C7E]",
       href: personalInfo.whatsapp,
     },
     {
       id: "x",
       label: "X",
-      icon: <XIcon width={24} height={24} className="text-white drop-shadow-sm" />,
+      icon: (
+        <XIcon width={24} height={24} className="text-white drop-shadow-sm" />
+      ),
       gradient: "from-zinc-800 to-black",
       href: personalInfo.x,
     },
   ];
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!dockRef.current) return;
-    const rect = dockRef.current.getBoundingClientRect();
-    setMouseX(e.clientX - rect.left);
+  const handleMouseMove = (event: MouseEvent) => {
+    if (!dockRef.current || reducedMotion) return;
+    const next: Record<string, number> = {};
+    dockRef.current
+      .querySelectorAll<HTMLElement>("[data-dock-item]")
+      .forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const distance = Math.abs(event.clientX - rect.left - rect.width / 2);
+        next[element.dataset.dockItem!] =
+          1 + 0.45 * Math.max(0, 1 - distance / 110);
+      });
+    setScales(next);
   };
 
-  const handleMouseLeave = () => setMouseX(null);
+  const handleMouseLeave = () => setScales({});
 
   const windowIdMap: Record<string, string> = {
     finder: "finder",
@@ -116,7 +157,10 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
   };
 
   return (
-    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[60]">
+    <nav
+      aria-label="Dock"
+      className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[90]"
+    >
       <motion.div
         ref={dockRef}
         onMouseMove={handleMouseMove}
@@ -124,56 +168,34 @@ export function Dock({ onToggleTerminal, onToggleChat, onClickFinder, onToggleNo
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
-        style={{
-          backdropFilter: "blur(50px) saturate(150%)",
-          WebkitBackdropFilter: "blur(50px) saturate(150%)",
-          background: "rgba(255, 255, 255, 0.08)",
-          border: "1px solid rgba(255, 255, 255, 0.18)",
-          boxShadow:
-            "0 8px 40px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.2), inset 0 -0.5px 0 rgba(255, 255, 255, 0.05)",
-        }}
-        className="flex items-end gap-1.5 px-2.5 pt-2 pb-1.5 rounded-2xl"
+        className="mac-dock"
       >
         {items.map((item, index) => (
           <DockItem
             key={item.id}
             item={item}
             index={index}
-            mouseX={mouseX}
-            dockRef={dockRef}
+            scale={reducedMotion ? 1 : (scales[item.id] ?? 1)}
             isOpen={openWindows.includes(windowIdMap[item.id] ?? "")}
           />
         ))}
       </motion.div>
-    </div>
+    </nav>
   );
 }
 
 function DockItem({
   item,
   index,
-  mouseX,
-  dockRef,
+  scale,
   isOpen,
 }: {
   item: DockItemConfig;
   index: number;
-  mouseX: number | null;
-  dockRef: React.RefObject<HTMLDivElement | null>;
+  scale: number;
   isOpen: boolean;
 }) {
-  const itemRef = useRef<HTMLDivElement>(null);
   const [showTooltip, setShowTooltip] = useState(false);
-
-  let scale = 1;
-  if (mouseX !== null && itemRef.current && dockRef.current) {
-    const rect = itemRef.current.getBoundingClientRect();
-    const dockRect = dockRef.current.getBoundingClientRect();
-    const itemCenter = rect.left + rect.width / 2 - dockRect.left;
-    const distance = Math.abs(mouseX - itemCenter);
-    const maxDistance = 120;
-    scale = 1 + 0.6 * Math.max(0, 1 - distance / maxDistance);
-  }
 
   const Wrapper = item.href ? "a" : "button";
   const wrapperProps = item.href
@@ -186,10 +208,12 @@ function DockItem({
         <div className="w-px h-7 bg-white/[0.12] mx-0.5 self-center" />
       )}
       <div
-        ref={itemRef}
+        data-dock-item={item.id}
         className="relative flex flex-col items-center"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
+        onFocus={() => setShowTooltip(true)}
+        onBlur={() => setShowTooltip(false)}
       >
         <AnimatePresence>
           {showTooltip && (
@@ -198,12 +222,7 @@ function DockItem({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 4 }}
               transition={{ duration: 0.12 }}
-              style={{
-                backdropFilter: "blur(30px)",
-                WebkitBackdropFilter: "blur(30px)",
-                background: "rgba(30, 30, 30, 0.85)",
-              }}
-              className="absolute -top-9 rounded-md px-2.5 py-1 text-[11px] font-medium text-white/90 whitespace-nowrap pointer-events-none border border-white/10 shadow-lg"
+              className="mac-dock-tooltip absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap pointer-events-none"
             >
               {item.label}
             </motion.div>
@@ -211,15 +230,20 @@ function DockItem({
         </AnimatePresence>
         <Wrapper
           {...(wrapperProps as Record<string, unknown>)}
-          className="block"
+          aria-label={item.label}
+          className="block rounded-[14px]"
         >
           <motion.div
             animate={{ scale }}
-            transition={{ type: "spring", stiffness: 400, damping: 25, mass: 0.5 }}
-            className={`w-12 h-12 rounded-[13px] bg-gradient-to-br ${item.gradient} flex items-center justify-center cursor-pointer`}
+            transition={{
+              type: "spring",
+              stiffness: 400,
+              damping: 25,
+              mass: 0.5,
+            }}
+            className={`mac-app-icon w-12 h-12 rounded-[14px] bg-gradient-to-br ${item.gradient} flex items-center justify-center cursor-pointer`}
             style={{
               originY: 1,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.15)",
             }}
           >
             {item.icon}
@@ -227,7 +251,7 @@ function DockItem({
         </Wrapper>
         <div
           className={`w-1 h-1 rounded-full mt-1 transition-opacity duration-200 ${
-            isOpen ? "bg-white/70 opacity-100" : "opacity-0"
+            isOpen ? "bg-white opacity-100" : "opacity-0"
           }`}
         />
       </div>
