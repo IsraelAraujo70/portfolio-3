@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
+import { DESKTOP_INSETS } from "./desktop-geometry";
+import { getNotePosition } from "./sticky-note-position";
 
 interface Note {
   id: number;
@@ -43,13 +45,6 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(days / 30)}mo ago`;
 }
 
-function getNotePosition(id: number) {
-  const seed = Math.imul(id, 2654435761) >>> 0;
-  const x = 40 + ((seed % 1000) / 1000) * 65;
-  const y = 5 + (((seed >>> 10) % 1000) / 1000) * 55;
-  return { x, y };
-}
-
 function StickyNote({ note, index }: { note: Note; index: number }) {
   const colors = COLOR_MAP[note.color] || COLOR_MAP.yellow;
   const pos = getNotePosition(note.id);
@@ -59,10 +54,12 @@ function StickyNote({ note, index }: { note: Note; index: number }) {
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
-      className={`absolute w-44 ${colors.bg} ${colors.border} border rounded-sm shadow-md cursor-default select-none`}
+      className={`absolute w-44 max-w-full max-h-full overflow-y-auto pointer-events-auto ${colors.bg} ${colors.border} border rounded-sm shadow-md cursor-default select-none`}
       style={{
         left: `${pos.x}%`,
         top: `${pos.y}%`,
+        // Percent translation subtracts this card's actual size from its available travel.
+        translate: `${-pos.x}% ${-pos.y}%`,
         transform: `rotate(${note.rotation}deg)`,
         zIndex: 2,
       }}
@@ -77,20 +74,21 @@ function StickyNote({ note, index }: { note: Note; index: number }) {
         >
           {note.content}
         </p>
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex items-center justify-between gap-2 mt-2">
           <span
-            className="text-gray-500 text-xs"
+            className="min-w-0 break-words text-gray-500 text-xs"
             style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
           >
             — {note.author}
           </span>
-          <span className="text-gray-400 text-[10px]">{timeAgo(note.created_at)}</span>
+          <span className="shrink-0 text-gray-400 text-[10px]">{timeAgo(note.created_at)}</span>
         </div>
       </div>
     </motion.div>
   );
 }
 
+/** Positions notes inside the same menu and Dock boundaries as desktop windows. */
 export function StickyNotesLayer({ refetchRef }: { refetchRef?: React.RefObject<(() => void) | null> }) {
   const [notes, setNotes] = useState<Note[]>([]);
 
@@ -116,7 +114,7 @@ export function StickyNotesLayer({ refetchRef }: { refetchRef?: React.RefObject<
   }, [refetchRef, fetchNotes]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 2 }}>
+    <div className="fixed pointer-events-none" style={{ ...DESKTOP_INSETS, zIndex: 2 }}>
       {notes.map((note, i) => (
         <StickyNote key={note.id} note={note} index={i} />
       ))}

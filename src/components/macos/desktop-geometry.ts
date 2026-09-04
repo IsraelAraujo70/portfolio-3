@@ -9,13 +9,15 @@ interface Viewport {
   height: number;
 }
 
+export const DESKTOP_INSETS = { top: 44, right: 12, bottom: 100, left: 12 };
+
 /** Reserve space for the menu bar and magnified Dock, including on short screens. */
 export function desktopBounds({ width, height }: Viewport): Rect {
   return {
-    x: 12,
-    y: 44,
-    w: Math.max(1, width - 24),
-    h: Math.max(1, height - 144),
+    x: DESKTOP_INSETS.left,
+    y: DESKTOP_INSETS.top,
+    w: Math.max(1, width - DESKTOP_INSETS.left - DESKTOP_INSETS.right),
+    h: Math.max(1, height - DESKTOP_INSETS.top - DESKTOP_INSETS.bottom),
   };
 }
 
