@@ -49,7 +49,8 @@ export function NotesApp() {
   }, []);
 
   useEffect(() => {
-    fetchNotes();
+    const timeout = window.setTimeout(fetchNotes, 0);
+    return () => window.clearTimeout(timeout);
   }, [fetchNotes]);
 
   return (
@@ -89,14 +90,14 @@ export function NotesApp() {
               <div className="px-4 pb-3 pt-1">
                 <p
                   className="text-gray-800 text-base leading-snug break-words"
-                  style={{ fontFamily: "var(--font-caveat), cursive" }}
+                  style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
                 >
                   {note.content}
                 </p>
                 <div className="flex items-center justify-between mt-2">
                   <span
                     className="text-gray-500 text-sm"
-                    style={{ fontFamily: "var(--font-caveat), cursive" }}
+                    style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
                   >
                     — {note.author}
                   </span>

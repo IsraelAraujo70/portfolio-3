@@ -2,7 +2,7 @@
 
 import { type CSSProperties } from "react";
 import { WindowChrome } from "./window-chrome";
-import { ChatContent } from "./chat-content";
+import { ChatContent } from "@/components/chat/chat-content";
 
 interface ChatWindowProps {
   isOpen: boolean;

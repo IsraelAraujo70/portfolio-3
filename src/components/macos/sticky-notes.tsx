@@ -43,7 +43,7 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(days / 30)}mo ago`;
 }
 
-function getNotePosition(id: number, _index: number) {
+function getNotePosition(id: number) {
   const seed = Math.imul(id, 2654435761) >>> 0;
   const x = 40 + ((seed % 1000) / 1000) * 65;
   const y = 5 + (((seed >>> 10) % 1000) / 1000) * 55;
@@ -52,7 +52,7 @@ function getNotePosition(id: number, _index: number) {
 
 function StickyNote({ note, index }: { note: Note; index: number }) {
   const colors = COLOR_MAP[note.color] || COLOR_MAP.yellow;
-  const pos = getNotePosition(note.id, index);
+  const pos = getNotePosition(note.id);
 
   return (
     <motion.div
@@ -73,14 +73,14 @@ function StickyNote({ note, index }: { note: Note; index: number }) {
       <div className="px-3 pb-2 pt-1">
         <p
           className="text-gray-800 text-sm leading-snug break-words"
-          style={{ fontFamily: "var(--font-caveat), cursive" }}
+          style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
         >
           {note.content}
         </p>
         <div className="flex items-center justify-between mt-2">
           <span
             className="text-gray-500 text-xs"
-            style={{ fontFamily: "var(--font-caveat), cursive" }}
+            style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
           >
             — {note.author}
           </span>
@@ -105,7 +105,8 @@ export function StickyNotesLayer({ refetchRef }: { refetchRef?: React.RefObject<
   }, []);
 
   useEffect(() => {
-    fetchNotes();
+    const timeout = window.setTimeout(fetchNotes, 0);
+    return () => window.clearTimeout(timeout);
   }, [fetchNotes]);
 
   useEffect(() => {
@@ -206,7 +207,7 @@ export function StickyNoteForm({
               <div className="flex items-center justify-between mb-2">
                 <h3
                   className="text-gray-700 font-semibold text-lg"
-                  style={{ fontFamily: "var(--font-caveat), cursive" }}
+                  style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
                 >
                   Leave a note!
                 </h3>
@@ -226,7 +227,7 @@ export function StickyNoteForm({
                 rows={4}
                 placeholder="Write something nice..."
                 className="w-full bg-transparent border-none outline-none resize-none text-gray-800 text-sm placeholder:text-gray-400"
-                style={{ fontFamily: "var(--font-caveat), cursive" }}
+                style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
               />
               <div className="text-right text-[10px] text-gray-400 -mt-1 mb-2">
                 {content.length}/200
@@ -238,7 +239,7 @@ export function StickyNoteForm({
                 maxLength={30}
                 placeholder="Your name (optional)"
                 className="w-full bg-white/40 rounded px-2 py-1 text-sm text-gray-700 placeholder:text-gray-400 outline-none mb-3"
-                style={{ fontFamily: "var(--font-caveat), cursive" }}
+                style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
               />
 
               <div className="flex items-center gap-2 mb-3">
@@ -259,7 +260,7 @@ export function StickyNoteForm({
               {status === "success" && (
                 <p
                   className="text-green-700 text-sm text-center mb-2"
-                  style={{ fontFamily: "var(--font-caveat), cursive" }}
+                  style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
                 >
                   Note posted!
                 </p>
@@ -267,7 +268,7 @@ export function StickyNoteForm({
               {status === "error" && (
                 <p
                   className="text-red-600 text-xs text-center mb-2"
-                  style={{ fontFamily: "var(--font-caveat), cursive" }}
+                  style={{ fontFamily: '"Bradley Hand", "Segoe Print", cursive' }}
                 >
                   {errorMsg}
                 </p>

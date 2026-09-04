@@ -9,16 +9,31 @@ import {
   useRef,
 } from "react";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
+import dynamic from "next/dynamic";
 import { DesktopWallpaper } from "./desktop-wallpaper";
 import { FinderWindow } from "./finder-window";
-import { TerminalWindow } from "./terminal-window";
-import { ChatWindow } from "./chat-window";
 import { Dock } from "./dock";
 import { MenuBar } from "./menu-bar";
 import { desktopBounds, fitToDesktop } from "./desktop-geometry";
-import { StickyNotesLayer, StickyNoteForm } from "./sticky-notes";
 import { useDrag } from "@/hooks/use-drag";
 import { useResize } from "@/hooks/use-resize";
+
+const TerminalWindow = dynamic(
+  () => import("./terminal-window").then((module) => module.TerminalWindow),
+  { ssr: false },
+);
+const ChatWindow = dynamic(
+  () => import("./chat-window").then((module) => module.ChatWindow),
+  { ssr: false },
+);
+const StickyNotesLayer = dynamic(
+  () => import("./sticky-notes").then((module) => module.StickyNotesLayer),
+  { ssr: false },
+);
+const StickyNoteForm = dynamic(
+  () => import("./sticky-notes").then((module) => module.StickyNoteForm),
+  { ssr: false },
+);
 
 type WindowId = "finder" | "terminal" | "chat";
 
@@ -614,11 +629,11 @@ export function Desktop() {
           </WindowWrapper>
         </div>
 
-        <StickyNoteForm
-          isOpen={showNoteForm}
+        {showNoteForm && <StickyNoteForm
+          isOpen
           onClose={() => setShowNoteForm(false)}
           onNoteAdded={() => notesRefetchRef.current?.()}
-        />
+        />}
 
         <Dock
           onToggleTerminal={handleDockTerminal}

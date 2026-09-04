@@ -1,16 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, MotionConfig } from "framer-motion";
+import { useState, type ReactNode } from "react";
 import { DesktopWallpaper } from "@/components/macos/desktop-wallpaper";
 import { StatusBar } from "./status-bar";
 import { HomeScreen, type AppId, type AppLaunch } from "./home-screen";
 import { HomeIndicator } from "./home-indicator";
 import { AppFrame } from "./app-frame";
-import { PortfolioApp } from "./apps/portfolio-app";
-import { TerminalApp } from "./apps/terminal-app";
-import { ChatApp } from "./apps/chat-app";
-import { NotesApp } from "./apps/notes-app";
 
 const GRADIENTS: Record<AppId, string> = {
   portfolio: "from-blue-400 to-blue-600",
@@ -19,41 +14,72 @@ const GRADIENTS: Record<AppId, string> = {
   notes: "from-amber-400 to-yellow-500",
 };
 
-/** Mobile application shell with system reduced-motion preferences. */
+interface LoadedApp {
+  id: AppId;
+  render: () => ReactNode;
+}
+
 export function IOS() {
   const [open, setOpen] = useState<AppLaunch | null>(null);
+  const [loadedApp, setLoadedApp] = useState<LoadedApp | null>(null);
 
   const close = () => setOpen(null);
-  const launchChat = () => setOpen({ id: "chat", source: "grid" });
 
-  const morphId = open ? `${open.source}-${open.id}` : "";
+  const launch = async (target: AppLaunch) => {
+    setOpen(target);
+    setLoadedApp(null);
+
+    if (target.id === "portfolio") {
+      const { PortfolioApp } = await import("./apps/portfolio-app");
+      setLoadedApp({
+        id: target.id,
+        render: () => (
+          <PortfolioApp
+            onOpenChat={() => void launch({ id: "chat", source: "grid" })}
+          />
+        ),
+      });
+      return;
+    }
+
+    if (target.id === "terminal") {
+      const { TerminalApp } = await import("./apps/terminal-app");
+      setLoadedApp({
+        id: target.id,
+        render: () => <TerminalApp onClose={close} />,
+      });
+      return;
+    }
+
+    if (target.id === "chat") {
+      const { ChatApp } = await import("./apps/chat-app");
+      setLoadedApp({ id: target.id, render: () => <ChatApp /> });
+      return;
+    }
+
+    const { NotesApp } = await import("./apps/notes-app");
+    setLoadedApp({ id: target.id, render: () => <NotesApp /> });
+  };
 
   return (
-    <MotionConfig reducedMotion="user">
-      <div className="h-screen w-screen overflow-hidden relative">
-        <DesktopWallpaper />
-        <HomeScreen onLaunch={setOpen} />
+    <div className="h-screen w-screen overflow-hidden relative">
+      <DesktopWallpaper />
+      <HomeScreen onLaunch={(target) => void launch(target)} />
 
-        <AnimatePresence>
-          {open && (
-            <AppFrame
-              key={morphId}
-              morphLayoutId={morphId}
-              gradient={GRADIENTS[open.id]}
-            >
-              {open.id === "portfolio" && (
-                <PortfolioApp onOpenChat={launchChat} />
-              )}
-              {open.id === "terminal" && <TerminalApp onClose={close} />}
-              {open.id === "chat" && <ChatApp />}
-              {open.id === "notes" && <NotesApp />}
-            </AppFrame>
+      {open && (
+        <AppFrame gradient={GRADIENTS[open.id]}>
+          {loadedApp?.id === open.id ? (
+            loadedApp.render()
+          ) : (
+              <div className="h-full w-full flex items-center justify-center text-white/70 text-sm">
+                Opening…
+              </div>
           )}
-        </AnimatePresence>
+        </AppFrame>
+      )}
 
-        <StatusBar />
-        <HomeIndicator appOpen={!!open} onClose={close} />
-      </div>
-    </MotionConfig>
+      <StatusBar />
+      <HomeIndicator appOpen={!!open} onClose={close} />
+    </div>
   );
 }

@@ -5,18 +5,19 @@ import { useMemo } from "react";
 export function CalendarWidget() {
   const now = new Date();
   const month = now.toLocaleString("en-US", { month: "long" });
+  const monthIndex = now.getMonth();
   const year = now.getFullYear();
   const today = now.getDate();
   const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" }).toUpperCase();
 
   const { days, startDay } = useMemo(() => {
-    const daysInMonth = new Date(year, now.getMonth() + 1, 0).getDate();
-    const startDay = new Date(year, now.getMonth(), 1).getDay();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+    const startDay = new Date(year, monthIndex, 1).getDay();
     return {
       days: Array.from({ length: daysInMonth }, (_, i) => i + 1),
       startDay,
     };
-  }, [year, now.getMonth()]);
+  }, [year, monthIndex]);
 
   return (
     <div className="liquid-glass rounded-2xl p-4 w-full">
