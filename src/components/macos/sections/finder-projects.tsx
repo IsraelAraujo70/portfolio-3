@@ -12,14 +12,18 @@ import {
   Workflow,
   PanelTop,
 } from "lucide-react";
-import { additionalProjects, featuredProjects } from "@/lib/resume-data";
+import { additionalProjects, featuredProjects, projects } from "@/lib/resume-data";
 
 const projectIcons = [Layers, HardDrive, Workflow];
 
 /** File selection shows one case study in place, without hiding the other projects. */
-export function FinderProjects() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const selected = featuredProjects[selectedIndex];
+export function FinderProjects({ selectedProjectId, onSelectProject }: {
+  selectedProjectId?: string;
+  onSelectProject?: (id: string) => void;
+}) {
+  const [localProjectId, setLocalProjectId] = useState(featuredProjects[0].id);
+  const selected = projects.find((project) => project.id === (selectedProjectId ?? localProjectId)) ?? featuredProjects[0];
+  const selectProject = onSelectProject ?? setLocalProjectId;
 
   return (
     <section
@@ -47,9 +51,9 @@ export function FinderProjects() {
               key={project.name}
               type="button"
               className="project-file"
-              aria-pressed={index === selectedIndex}
+              aria-pressed={project.id === selected.id}
               aria-controls="project-preview"
-              onClick={() => setSelectedIndex(index)}
+              onClick={() => selectProject(project.id)}
             >
               <span className="project-folder" aria-hidden="true">
                 <Icon strokeWidth={1.8} />
@@ -83,14 +87,14 @@ export function FinderProjects() {
               <ArrowUpRight size={12} />
             </a>
           </div>
-          <div className="project-preview-body">
+          <div className="project-preview-body" id={`project-${selected.id}-overview`}>
             <h3 id="project-preview-title" className="project-preview-title">
               {selected.name}
             </h3>
             <p className="project-preview-description">
               {selected.description}
             </p>
-            <div className="project-tech">
+            <div className="project-tech" id={`project-${selected.id}-tech`}>
               {selected.tech.map((tech) => (
                 <span key={tech}>{tech}</span>
               ))}
@@ -103,7 +107,7 @@ export function FinderProjects() {
                   <h4>My contribution</h4>
                   <p>{selected.caseStudy.contribution}</p>
                 </div>
-                <div>
+                <div id={`project-${selected.id}-decisions`}>
                   <h4>Engineering decisions</h4>
                   <ul>
                     {selected.caseStudy.decisions.map((decision) => (

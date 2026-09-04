@@ -4,6 +4,8 @@ import { Check, Copy } from "lucide-react";
 import type { UIMessage } from "ai";
 import { getMessageText } from "@/lib/chat-ux";
 import { ChatMarkdown } from "./chat-markdown";
+import { ChatNavigation } from "./chat-navigation";
+import type { NavigatePortfolio } from "@/lib/portfolio-navigation";
 
 /** Copies the original Markdown and reports clipboard failures without losing the response. */
 function CopyResponse({ text }: { text: string }) {
@@ -50,12 +52,15 @@ function CopyResponse({ text }: { text: string }) {
 export function ChatMessage({
   message,
   streaming = false,
+  onNavigate,
 }: {
   message: UIMessage;
   streaming?: boolean;
+  onNavigate?: NavigatePortfolio;
 }) {
   const text = getMessageText(message.parts);
-  if (!text) return null;
+  const navigationParts = message.parts.filter((part) => part.type === "tool-showProject" || part.type === "tool-showSection");
+  if (!text && navigationParts.length === 0) return null;
   const isUser = message.role === "user";
   return (
     <article
@@ -67,7 +72,10 @@ export function ChatMessage({
       ) : (
         <ChatMarkdown>{text}</ChatMarkdown>
       )}
-      {!isUser && !streaming && <CopyResponse text={text} />}
+      {!isUser && navigationParts.map((part, index) => (
+        <ChatNavigation key={"toolCallId" in part ? part.toolCallId : index} part={part} onNavigate={onNavigate} />
+      ))}
+      {!isUser && text && !streaming && <CopyResponse text={text} />}
     </article>
   );
 }

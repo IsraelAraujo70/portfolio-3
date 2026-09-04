@@ -17,6 +17,7 @@ import { FinderExperience } from "./sections/finder-experience";
 import { FinderProjects } from "./sections/finder-projects";
 import { FinderOpenSource } from "./sections/finder-opensource";
 import { FinderContact } from "./sections/finder-contact";
+import { navigationTarget, type NavigationRequest } from "@/lib/portfolio-navigation";
 
 interface FinderWindowProps {
   onOpenChat: () => void;
@@ -27,6 +28,10 @@ interface FinderWindowProps {
   onFocus?: () => void;
   dragHandleProps?: Record<string, unknown>;
   style?: CSSProperties;
+  selectedProjectId?: string;
+  onSelectProject?: (id: string) => void;
+  navigation?: NavigationRequest | null;
+  onNavigationComplete?: (id: string, success: boolean) => void;
 }
 
 const sectionIds = [
@@ -47,9 +52,44 @@ export function FinderWindow({
   onFocus,
   dragHandleProps,
   style,
+  selectedProjectId,
+  onSelectProject,
+  navigation,
+  onNavigationComplete,
 }: FinderWindowProps) {
   const [activeSection, setActiveSection] = useState("hero");
   const contentRef = useRef<HTMLDivElement>(null);
+  const highlightRef = useRef<{ element: HTMLElement; timer: ReturnType<typeof setTimeout> } | null>(null);
+
+  useEffect(() => {
+    if (!navigation) return;
+    const element = document.getElementById(navigationTarget(navigation.action));
+    if (!element || !contentRef.current?.contains(element)) {
+      onNavigationComplete?.(navigation.id, false);
+      return;
+    }
+    const previous = highlightRef.current;
+    if (previous) {
+      clearTimeout(previous.timer);
+      previous.element.classList.remove("portfolio-ai-highlight");
+    }
+    // Finish scrolling before acknowledging the tool, including in background tabs.
+    element.scrollIntoView({ behavior: "instant", block: "start" });
+    element.classList.add("portfolio-ai-highlight");
+    highlightRef.current = {
+      element,
+      timer: setTimeout(() => element.classList.remove("portfolio-ai-highlight"), 4000),
+    };
+    onNavigationComplete?.(navigation.id, true);
+  }, [navigation, onNavigationComplete]);
+
+  useEffect(() => () => {
+    const highlight = highlightRef.current;
+    if (highlight) {
+      clearTimeout(highlight.timer);
+      highlight.element.classList.remove("portfolio-ai-highlight");
+    }
+  }, []);
 
   const handleNavigate = useCallback((id: string) => {
     const el = document.getElementById(`finder-${id}`);
@@ -118,7 +158,7 @@ export function FinderWindow({
             <FinderHero onOpenChat={onOpenChat} />
           </div>
           <div id="finder-projects">
-            <FinderProjects />
+            <FinderProjects selectedProjectId={selectedProjectId} onSelectProject={onSelectProject} />
           </div>
           <div id="finder-about">
             <FinderAbout />

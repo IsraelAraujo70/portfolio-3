@@ -5,6 +5,7 @@ import { ArrowDown, Loader2, Plus } from "lucide-react";
 import { useAIChat } from "@/hooks/use-ai-chat";
 import { getMessageText, isNearScrollEnd } from "@/lib/chat-ux";
 import { ChatComposer } from "./chat-composer";
+import type { NavigatePortfolio } from "@/lib/portfolio-navigation";
 import { ChatEmptyState } from "./chat-empty-state";
 import { ChatMessage } from "./chat-message";
 
@@ -12,9 +13,11 @@ import { ChatMessage } from "./chat-message";
 export function ChatContent({
   autoFocus = true,
   className = "",
+  onNavigate,
 }: {
   autoFocus?: boolean;
   className?: string;
+  onNavigate?: NavigatePortfolio;
 }) {
   const {
     messages,
@@ -30,7 +33,7 @@ export function ChatContent({
     handleStop,
     handleRetry,
     handleNewConversation,
-  } = useAIChat();
+  } = useAIChat(onNavigate);
   const scrollRef = useRef<HTMLDivElement>(null);
   const followsBottom = useRef(true);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -85,12 +88,13 @@ export function ChatContent({
       >
         <div className="mac-chat-thread">
           {messages.length === 0 && (
-            <ChatEmptyState onPick={handleSuggestion} />
+            <ChatEmptyState onPick={handleSuggestion} canNavigate={Boolean(onNavigate)} />
           )}
           {messages.map((message, index) => (
             <ChatMessage
               key={message.id}
               message={message}
+              onNavigate={onNavigate}
               streaming={isLoading && index === messages.length - 1}
             />
           ))}

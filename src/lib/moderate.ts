@@ -11,11 +11,12 @@ const moderationSchema = z.object({
   decision: z.enum(["approved", "rejected"]),
 });
 
+/** Classify a proposed note before the caller decides whether to publish it. */
 export async function moderateNote(
   content: string,
   author: string,
 ): Promise<{ approved: boolean }> {
-  const model = process.env.OPENROUTER_MODEL || "anthropic/claude-sonnet-4-20250514";
+  const model = process.env.OPENROUTER_MODEL || "meta/muse-spark-1.3-contributor";
 
   const { object } = await generateObject({
     model: openrouter.chat(model),

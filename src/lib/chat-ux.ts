@@ -32,6 +32,7 @@ export function getMessageText(parts: Array<{ type: string; text?: string }>): s
     .join("");
 }
 
+/** Restore conversation history and settle interrupted navigation without executing it. */
 export function parseStoredChatMessages(raw: string | null): UIMessage[] {
   if (!raw) return [];
 
@@ -47,10 +48,35 @@ export function parseStoredChatMessages(raw: string | null): UIMessage[] {
         (candidate.role === "user" || candidate.role === "assistant") &&
         Array.isArray(candidate.parts)
       );
-    });
+    }).map((message) => ({
+      ...message,
+      parts: message.parts.map((part) => {
+        if ((part.type === "tool-showProject" || part.type === "tool-showSection") &&
+            "state" in part && part.state !== "output-available" && part.state !== "output-error") {
+          return {
+            type: part.type,
+            toolCallId: part.toolCallId,
+            input: part.input,
+            state: "output-error" as const,
+            errorText: "Navigation was interrupted. Ask again to open this destination.",
+          };
+        }
+        return part;
+      }),
+    }));
   } catch {
     return [];
   }
+}
+
+/** End the navigation step after its result so the model explains instead of opening more windows. */
+export function hasNavigationResult(messages: UIMessage[]): boolean {
+  const lastUserIndex = messages.findLastIndex((message) => message.role === "user");
+  return messages.slice(lastUserIndex + 1).some((message) =>
+    message.parts.some((part) =>
+      (part.type === "tool-showProject" || part.type === "tool-showSection") &&
+      "state" in part && (part.state === "output-available" || part.state === "output-error")),
+  );
 }
 
 export function isNearScrollEnd(

@@ -17,6 +17,8 @@ import { MenuBar } from "./menu-bar";
 import { desktopBounds, fitToDesktop } from "./desktop-geometry";
 import { useDrag } from "@/hooks/use-drag";
 import { useResize } from "@/hooks/use-resize";
+import { projects } from "@/lib/resume-data";
+import { navigationResult, parsePortfolioAction, type NavigatePortfolio, type NavigationRequest, type NavigationResult } from "@/lib/portfolio-navigation";
 
 const TerminalWindow = dynamic(
   () => import("./terminal-window").then((module) => module.TerminalWindow),
@@ -459,6 +461,59 @@ export function Desktop() {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const notesRefetchRef = useRef<(() => void) | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState(projects[0].id);
+  const [navigation, setNavigation] = useState<NavigationRequest | null>(null);
+  const pendingNavigation = useRef<{
+    id: string;
+    resolve: (result: NavigationResult) => void;
+    reject: (error: Error) => void;
+    result: NavigationResult;
+    timer: ReturnType<typeof setTimeout>;
+  } | null>(null);
+
+  const completeNavigation = useCallback((id: string, success: boolean) => {
+    const pending = pendingNavigation.current;
+    if (!pending || pending.id !== id) return;
+    clearTimeout(pending.timer);
+    pendingNavigation.current = null;
+    setNavigation(null);
+    if (success) pending.resolve(pending.result);
+    else pending.reject(new Error("Could not display this portfolio destination."));
+  }, []);
+
+  const navigatePortfolio = useCallback<NavigatePortfolio>((requested) => {
+    const { type, ...input } = requested;
+    const action = parsePortfolioAction(type, input, projects);
+    const previous = pendingNavigation.current;
+    if (previous) completeNavigation(previous.id, false);
+    const id = crypto.randomUUID();
+    return new Promise((resolve, reject) => {
+      pendingNavigation.current = {
+        id, resolve, reject, result: navigationResult(action, projects),
+        timer: setTimeout(() => completeNavigation(id, false), 5000),
+      };
+      if (action.type === "showProject") setSelectedProjectId(action.projectId);
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+      const bounds = desktopBounds(viewport);
+      // Keep the explanation beside the destination when both windows can fit.
+      if (bounds.w >= 1000) {
+        const chatWidth = Math.min(420, bounds.w * 0.4);
+        dispatch({ type: "RESIZE", id: "finder", rect: { ...bounds, w: bounds.w - chatWidth - 16 } });
+        dispatch({ type: "RESIZE", id: "chat", rect: { ...bounds, x: bounds.x + bounds.w - chatWidth, w: chatWidth } });
+      }
+      dispatch({ type: "OPEN", id: "finder" });
+      setNavigation({ id, action });
+    });
+  }, [completeNavigation]);
+
+  useEffect(() => () => {
+    const pending = pendingNavigation.current;
+    if (pending) {
+      clearTimeout(pending.timer);
+      pending.reject(new Error("Desktop closed before navigation completed."));
+      pendingNavigation.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     const vw = window.innerWidth;
@@ -572,6 +627,10 @@ export function Desktop() {
               style,
             }) => (
               <FinderWindow
+                selectedProjectId={selectedProjectId}
+                onSelectProject={setSelectedProjectId}
+                navigation={navigation}
+                onNavigationComplete={completeNavigation}
                 onOpenChat={() => dispatch({ type: "OPEN", id: "chat" })}
                 onOpenTerminal={() =>
                   dispatch({ type: "OPEN", id: "terminal" })
@@ -618,6 +677,7 @@ export function Desktop() {
             }) => (
               <ChatWindow
                 isOpen
+                onNavigate={navigatePortfolio}
                 onClose={onClose}
                 onMinimize={onMinimize}
                 onMaximize={onMaximize}

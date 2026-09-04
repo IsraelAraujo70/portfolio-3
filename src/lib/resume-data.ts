@@ -171,6 +171,7 @@ export const experience = [
 ];
 
 export interface PortfolioProject {
+  id: string;
   name: string;
   tagline: string;
   description: string;
@@ -189,6 +190,7 @@ export interface PortfolioProject {
 
 export const projects: PortfolioProject[] = [
   {
+    id: "reason",
     name: "Reason",
     tagline: "Collaborative AI Workspace",
     description:
@@ -212,6 +214,7 @@ export const projects: PortfolioProject[] = [
     },
   },
   {
+    id: "drive-clone",
     name: "Drive Clone",
     tagline: "Cloud Storage Platform",
     description:
@@ -235,6 +238,7 @@ export const projects: PortfolioProject[] = [
     },
   },
   {
+    id: "flux-oriented-architecture",
     name: "Flux-Oriented Architecture",
     tagline: "Backend Flow Orchestration",
     description:
@@ -257,6 +261,7 @@ export const projects: PortfolioProject[] = [
     },
   },
   {
+    id: "prism",
     name: "Prism",
     tagline: "Desktop GitHub PR Client",
     description:
@@ -267,6 +272,7 @@ export const projects: PortfolioProject[] = [
     featured: false,
   },
   {
+    id: "lurian-ai",
     name: "Lurian AI",
     tagline: "AI-Powered Personal Finance",
     description:
@@ -277,6 +283,7 @@ export const projects: PortfolioProject[] = [
     featured: false,
   },
   {
+    id: "socialterminal",
     name: "SocialTerminal",
     tagline: "Social Network over SSH & Web",
     description:
